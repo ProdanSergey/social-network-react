@@ -9,4 +9,5 @@ var Schema = mongoose.Schema({
   secondName: String,
   dateOfBirth: String
 });
+
 export default mongoose.model('User', Schema);

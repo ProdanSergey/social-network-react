@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import User from '../models/user.model';
 
 export const getUsers = (req,res) => {
-    res.json({
+    res.json([{
         hello: 'hello',
         world: 'world'
-    });
+    }]);
 }
 
 export const addUser = (req,res) => {
@@ -21,12 +21,15 @@ export const addUser = (req,res) => {
         });
     console.log(newUser)
 }
+
 export const updateUser = (req,res) => {
 
 }
+
 export const getUser = (req,res) => {
 
 }
+
 export const deleteUser = (req,res) => {
  
 }
