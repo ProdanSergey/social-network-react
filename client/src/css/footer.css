@@ -1,0 +1,15 @@
+.footer .footer-nav ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.footer .footer-nav ul > li:not(:last-child) {
+  margin-right: 1rem;
+}
