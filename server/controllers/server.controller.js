@@ -11,7 +11,7 @@ export const getUsers = (req,res) => {
 }
 
 export const addUser = (req,res) => {
-  const newUser = new User(req.body);
+    const newUser = new User(req.body);
     newUser.save()
         .then(item => {
             res.send("item saved to database");
@@ -19,7 +19,6 @@ export const addUser = (req,res) => {
         .catch(err => {
             res.status(400).send("unable to save to database");
         });
-    console.log(newUser)
 }
 
 export const updateUser = (req,res) => {
@@ -31,5 +30,5 @@ export const getUser = (req,res) => {
 }
 
 export const deleteUser = (req,res) => {
- 
+
 }

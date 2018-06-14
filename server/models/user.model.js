@@ -5,9 +5,10 @@ var Schema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  firstName: String,
-  secondName: String,
-  dateOfBirth: String
+  name:{
+    type: String,
+    default: 'new user'
+  }
 });
 
 export default mongoose.model('User', Schema);
