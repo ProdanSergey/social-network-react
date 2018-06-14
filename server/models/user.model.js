@@ -5,9 +5,21 @@ var Schema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  name:{
+  firstName:{
     type: String,
     default: 'new user'
+  },
+  middleName:{
+    type: String,
+    default: 'none'
+  },
+  lastName:{
+    type: String,
+    default: 'none'
+  },
+  email: {
+    type: String,
+    default: 'none'
   }
 });
 

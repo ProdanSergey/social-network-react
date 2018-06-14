@@ -18,7 +18,7 @@ bb.extend(app);
 // allow-cors
 app.use(function(req,res,next){
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type = 'application/json', Accept");
   next();
 });
 
@@ -27,8 +27,11 @@ const port = process.env.PORT || 3001;
 
 // configure app
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended:true }));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false}));
+// parse application/json
+app.use(bodyParser.json({ type: 'application/*+json' }))
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // connect to database

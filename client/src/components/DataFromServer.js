@@ -7,6 +7,7 @@ class Data extends Component {
     console.log(this)
     fetch('/api')
       .then(function(response){
+        console.log(response)
         return response.json();
       })
       .then(users => this.setState({ users }));
