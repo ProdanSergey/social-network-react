@@ -32,8 +32,7 @@ class RegForm extends React.Component {
     const name = target.name;
     regex.test(value) ? 
       this.setState({inputValid: {...this.state.inputValid, [name]: true}}) :
-      this.setState({inputValid: {...this.state.inputValid, [name]: false}});
-    
+        this.setState({inputValid: {...this.state.inputValid, [name]: false}});
     this.setState({user: {...this.state.user, [name]: value}});
   }
   
@@ -67,6 +66,7 @@ class RegForm extends React.Component {
   }
 
   render() {
+    console.log(this.state.user)
     return(
       <div className="col-6">
         <form onSubmit={this.handleSubmit}>
@@ -113,7 +113,9 @@ class RegForm extends React.Component {
           </div>
           <div className="form-group">
             <label htmlFor="email">Email address</label>
-            <input type="email" className="form-control" name="email" aria-describedby="emailHelp" placeholder="Enter email" required="required"/>
+            <input type="email" className="form-control" name="email" aria-describedby="emailHelp" 
+              onChange={this.handleChange}
+              placeholder="Enter email" required="required"/>
             <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
           </div>
           <div className="form-group">
