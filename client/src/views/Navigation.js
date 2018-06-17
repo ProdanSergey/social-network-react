@@ -14,7 +14,7 @@ class Navigation extends React.Component {
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav mr-auto">
                                 <li className="nav-item">
-                        <Link to='/registration' className="nav-link">Registration</Link>
+                                    <Link to='/registration' className="nav-link">Registration</Link>
                                 </li>
                             </ul>
                         </div>
