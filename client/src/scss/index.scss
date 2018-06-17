@@ -1,3 +1,25 @@
+@import url('./root.css');
+
 #root {
     height: 100vh;
+}
+.container {
+    height: 1px;
+    min-height: 100%;
+}
+
+.header {
+    height: 70px;
+    .navbar {
+        height: 100%;
+    }
+}
+
+.main {
+    min-height: 100%;
+}
+
+.footer {
+    height: 70px;
+    background-color: var(--main);
 }

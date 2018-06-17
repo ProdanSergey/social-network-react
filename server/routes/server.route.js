@@ -11,7 +11,7 @@ router.route('/')
         .post(appController.addUser)
         .put(appController.updateUser);
 router.route('/:id')
-        .get(appController.getUser)
+        .get(appController.getUsers)
         .delete(appController.deleteUser);
 
 export default router;
