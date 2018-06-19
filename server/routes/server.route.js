@@ -9,6 +9,6 @@ const router = express.Router();
 router.route('/')
         .get(appController.getUsers)
         .post(appController.addUser)
-        .put(appController.updateUser);
+        // .put(appController.updateUser);
 
 export default router;

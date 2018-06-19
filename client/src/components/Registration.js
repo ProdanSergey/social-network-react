@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 // Load action
 import { addUser } from '../actions/user-actions';
-import { toogleRegStatus } from '../actions/regStatus-actions';
+import { regSuccess, regFailed } from '../actions/regStatus-actions';
 
 // Generate header
 var myHeaders = new Headers();
@@ -27,18 +27,19 @@ class RegForm extends React.Component {
       isTouched: {},
       isFilled: {},
       isValid: {},
-      isFormValid: false
+      isFormValid: false,
+      userMessage: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  } 
 
   handleChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    let regex = name === 'email' ? /^[^а-яА-Я\s]+$/ : /^[^а-яА-Я\s\W]+$/;
+    const regex = name === 'email' ? /^[a-z0-9._@-]+$/i : /^[^а-яА-Я\s\W]+$/;
     this.setState({values: {...this.state.values, [name]: value}});
     this.setState({isFilled: {...this.state.isFilled, [name]: !!value.length}})
     this.setState({isValid: {...this.state.isValid, [name]: regex.test(value) && value.length < 32}}); // Note: add exclude for email field
@@ -65,9 +66,14 @@ class RegForm extends React.Component {
     event.preventDefault();
     // Dispatch user data object to Redux Store
     this.props.dispatch(addUser(this.state.values));
-    // Send request to server-side
-    this.createUser(this.props.user);
   }
+
+  componentWillReceiveProps(nextProps) {
+    if(this.props.userDataIsReady !== nextProps.userDataIsReady) {
+      // Send request to server-side
+      this.createUser(nextProps.user);
+    }
+  } 
 
   isFormValid(obj) {
     for (let key in obj) {
@@ -81,22 +87,27 @@ class RegForm extends React.Component {
   }
 
   createUser(dataObject) {
-    var self = this;
+    let self = this;
     fetch('/api', {
       method: 'post',
       body: JSON.stringify(dataObject),
       headers: myHeaders
     })
     .then(function (response) {
-      console.log(response.statusText) // Note: add message for user and change field to inValid
+      if (response.statusText === 'It\'s ok!') {
+        self.props.dispatch(regSuccess()); // Dispatch flag regIsSuccess = true
+        self.setState({userMessage: response.statusText})
+      } else {
+        self.props.dispatch(regFailed()); // Dispatch flag regIsSuccess = false
+        self.setState({userMessage: response.statusText})
+      }
       return response;
     })
-    .then(function (data) {  
-      console.log('Request succeeded with JSON response', data); // Dispatch flag isUserRegistered
-      self.props.dispatch(toogleRegStatus(!self.props.userIsRegistered)); // Why it doesn't triggered?
+    .then(function (data) {
+      console.log('Request succeeded with JSON response', data); 
     })  
     .catch(function (error) {  
-      console.log('Request failed', error);  
+      console.log('Request failed', error);
     });
   }
 
@@ -109,8 +120,8 @@ class RegForm extends React.Component {
   }
 
   render() {
-    console.log(this.state)
-    console.log(this.props)
+    // console.log(this.state)
+    // console.log(this.props)
     return(
       <main className="row main">
         <div className="col-6">
@@ -220,18 +231,26 @@ class RegForm extends React.Component {
                 onChange={this.handleUpload}
                 />
             </div>
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-              disabled={!this.state.isFormValid}>
-                Submit
-            </button>
+            <div className="row">
+              <div className="col-3">
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  disabled={!this.state.isFormValid}>
+                    Submit
+                </button> 
+              </div>
+              <div className="col-9">
+                <p>{this.state.userMessage}</p>
+              </div>
+            </div>
+               
           </form>
         </div>
         <div className="col-6">
           <h1>Welcome to, Social Network React!</h1>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus repellat facilis sed libero eveniet porro aperiam error reprehenderit, fugit magni! Ab officiis magnam vitae voluptate vel laboriosam eos, explicabo accusamus.</p>
-        </div>
+        </div>    
       </main>
     );
   }
@@ -241,8 +260,9 @@ class RegForm extends React.Component {
 // Map props from Redux Store
 const mapStateToProps = function(store) {
   return {
+    userDataIsReady: store.userData.userDataIsReady,
     user: store.userData.user,
-    userIsRegistered: store.userRegStatus.userIsRegistered,
+    regIsSuccess: store.regState.regIsSuccess,
     language: store.langState.language
   };
 };
