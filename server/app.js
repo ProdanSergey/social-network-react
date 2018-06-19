@@ -5,9 +5,11 @@ import logger from 'morgan';
 import mongoose from 'mongoose';
 import bb from 'express-busboy';
 import SourceMapSupport from 'source-map-support';
+// import fileUpload from 'express-fileupload';
 
 // import routes
 import appRoutes from './routes/server.route';
+// import uploadRoutes from './routes/upload.route';
 
 // define our app using express
 const app = express();
@@ -24,6 +26,9 @@ app.use(function(req,res,next){
 
 // set the port
 const port = process.env.PORT || 3001;
+
+// Configure file upload module
+// app.use(fileUpload());
 
 // configure app
 app.use(logger('dev'));
@@ -42,6 +47,7 @@ mongoose.connect('mongodb://localhost/reactApp');
 SourceMapSupport.install();
 
 app.use('/api', appRoutes);
+// app.use('/upload', uploadRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });

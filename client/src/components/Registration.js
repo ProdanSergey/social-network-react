@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 // Load action
 import { addUser } from '../actions/user-actions';
+import { toogleRegStatus } from '../actions/regStatus-actions';
 
 // Generate header
 var myHeaders = new Headers();
@@ -26,59 +27,90 @@ class RegForm extends React.Component {
       isTouched: {},
       isFilled: {},
       isValid: {},
-      isFormValid: true
+      isFormValid: false
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleUpload = this.handleUpload.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange(event) {
-    const regex = /^[^а-яА-Я\s\W]+$/;
     const target = event.target;
     const value = target.value;
     const name = target.name;
+    let regex = name === 'email' ? /^[^а-яА-Я\s]+$/ : /^[^а-яА-Я\s\W]+$/;
     this.setState({values: {...this.state.values, [name]: value}});
-    if (value.length) {
-      this.setState({isFilled: {...this.state.isFilled, [name]: true}})
-    } else {
-      this.setState({isFilled: {...this.state.isFilled, [name]: false}})
+    this.setState({isFilled: {...this.state.isFilled, [name]: !!value.length}})
+    this.setState({isValid: {...this.state.isValid, [name]: regex.test(value) && value.length < 32}}); // Note: add exclude for email field
+    this.setState({isFormValid: this.isFormValid(this.state.isValid)})
+  }
+
+  handleUpload(event) {
+    const target = event.target;
+    const image = target.files[0];
+    const name = target.name;
+    if (!image) {
+      this.setState({isFilled: {...this.state.isFilled, [name]: false}});
+      this.setState({values: {...this.state.values, [name]: null}});
+      return
     }
-    this.setState({isValid: {...this.state.isValid, [name]: regex.test(value)}});
+    this.setState({isFilled: {...this.state.isFilled, [name]: true}});
+    let invalid = (image.size < 4e+4 || image.size > 5e+6 || image.type !== 'image/jpeg');
+    this.setState({isValid: {...this.state.isValid, [name]: !invalid}});
+    this.setState({values: {...this.state.values, [name]: image}});
   }
 
   handleSubmit(event) {
+    // Prevent default action
     event.preventDefault();
-    if (this.state.isValid) {
-      // Dispatch user data object to Redux Store
-      this.props.dispatch(addUser(this.state.values))
-    }
-    else {
-      alert('Form invalid!') // for test purposes
-    }
-    // this.createUser(this.state.user, this);
+    // Dispatch user data object to Redux Store
+    this.props.dispatch(addUser(this.state.values));
+    // Send request to server-side
+    this.createUser(this.props.user);
   }
 
-  createUser(dataObject, target) {
+  isFormValid(obj) {
+    for (let key in obj) {
+      if(obj[key]){
+        continue;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  createUser(dataObject) {
+    var self = this;
     fetch('/api', {
       method: 'post',
       body: JSON.stringify(dataObject),
       headers: myHeaders
     })
     .then(function (response) {
+      console.log(response.statusText) // Note: add message for user and change field to inValid
       return response;
     })
     .then(function (data) {  
-      console.log('Request succeeded with JSON response', data);
-      target.setState({isRegSuccess: true});
+      console.log('Request succeeded with JSON response', data); // Dispatch flag isUserRegistered
+      self.props.dispatch(toogleRegStatus(!self.props.userIsRegistered)); // Why it doesn't triggered?
     })  
     .catch(function (error) {  
       console.log('Request failed', error);  
     });
   }
 
+  createSelectItems(from, to) {
+    let items = [];
+    for(let i = from; i <= to; i++) {
+      items.push(<option key={i} value={i}>{i}</option>)
+    }
+    return items;
+  }
+
   render() {
-    // console.log(this.state)
-    // console.log(this.props)
+    console.log(this.state)
+    console.log(this.props)
     return(
       <main className="row main">
         <div className="col-6">
@@ -129,11 +161,48 @@ class RegForm extends React.Component {
                 <small id="lastNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
             </div>
             <div className="form-group">
+              <div className="row">
+                  <div className="col-6">
+                    <label htmlFor="gender">Gender</label>
+                    <select 
+                      className={this.state.isFilled.gender ?
+                        validInput :
+                            initialInput}
+                      name="gender"
+                      onChange={this.handleChange}
+                      defaultValue="default">
+                      <option disabled value="default">Choose...</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                  <div className="col-6">
+                    <label htmlFor="age">Age</label>
+                    <select 
+                      className={this.state.isFilled.age ?
+                          validInput :
+                              initialInput}
+                      name="age"
+                      onChange={this.handleChange}
+                      defaultValue="default">
+                      <option disabled value="default">Choose...</option>
+                      {this.createSelectItems(1,99)}
+                    </select>
+                  </div>
+              </div>
+            </div>
+            <div className="form-group">
               <label htmlFor="email">Email address</label>
               <input 
                 type="email"
-                className="form-control"
                 name="email"
+                className={this.state.isFilled.email ?
+                  this.state.isValid.email ?
+                    validInput : 
+                      invalidInput : 
+                        initialInput}
+                value={this.state.value}
+                onChange={this.handleChange}
                 aria-describedby="emailHelp"
                 placeholder="Enter email" required="required"/>
               <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -142,14 +211,20 @@ class RegForm extends React.Component {
               <label htmlFor="image">Choose photo...</label>
               <input
                 type="file"
-                className="form-control"
-                name="image"/>
+                className={this.state.isFilled.image ?
+                  this.state.isValid.image ?
+                    validInput : 
+                      invalidInput : 
+                        initialInput}
+                name="image"
+                onChange={this.handleUpload}
+                />
             </div>
             <button 
               type="submit" 
-              className="btn btn-primary" 
+              className="btn btn-primary"
               disabled={!this.state.isFormValid}>
-              Submit
+                Submit
             </button>
           </form>
         </div>
@@ -160,6 +235,7 @@ class RegForm extends React.Component {
       </main>
     );
   }
+
 };
 
 // Map props from Redux Store

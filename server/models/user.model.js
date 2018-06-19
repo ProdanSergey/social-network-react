@@ -17,6 +17,14 @@ var Schema = mongoose.Schema({
     type: String,
     default: 'none'
   },
+  age: {
+    type: String,
+    default: 'none'
+  },
+  gender: {
+    type: String,
+    default: 'none'
+  },
   email: {
     type: String,
     default: 'none'

@@ -7,8 +7,6 @@ import * as appController from '../controllers/server.controller';
 const router = express.Router();
 
 router.route('/')
-        .get(appController.getUsers)
-        .post(appController.addUser)
-        .put(appController.updateUser);
-
+        .post(appController.uploadUserImage);
+        
 export default router;
