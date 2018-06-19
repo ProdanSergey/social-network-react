@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
-
 //import models
 import User from '../models/user.model';
+
+//import controllers
+import PasswordGen from './password';
 
 export const getUsers = (req,res) => {
     res.json([{
@@ -11,9 +12,18 @@ export const getUsers = (req,res) => {
 }
 
 export const addUser = (req,res) => {
-    Object.keys(req.body).length === 0 ? console.log('пуст') : console.log(req.body)
+    req.body = {};
+    if (Object.keys(req.body).length === 0) {
+        res.statusMessage = "Empty object";
+        res.status(200).send();
+    } else {
+        res.statusMessage = "It's ok!";
+        res.status(200).send();
+    }
+    const password = PasswordGen();
+    const user = Object.assign({}, req.body, {password})
     const match = req.body.email;
-    const newUser = new User(req.body);
+    const newUser = new User(user);
     User.find({email: match}, (err, users) => {
         if (users.length) {
             res.statusMessage = "Email entry duplicate!!!";
@@ -21,34 +31,12 @@ export const addUser = (req,res) => {
         } else {
             newUser.save()
             .then(item => {
-                res.status(200).send("item saved to database");
+                res.statusMessage = `User is created successfuly. The password is ${password}`;
+                res.status(200).send();
             })
             .catch(err => {
-                res.status(400).send("unable to save to database");
+                res.status(400).send();
             });
         }
     })  
-}
-
-export const updateUser = (req,res) => {
-
-}
-
-export const getUser = (req,res) => {
-
-}
-
-export const deleteUser = (req,res) => {
-
-}
-
-export const uploadUserImage = (req, res) => {
-    console.log(req.body);
-    // let imageFile = req.files.file;
-    // imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, function(err) {
-    // if (err) {
-    //   return res.status(500).send(err);
-    // }
-    // res.json({file: `public/${req.body.filename}.jpg`});
-    // });
 }

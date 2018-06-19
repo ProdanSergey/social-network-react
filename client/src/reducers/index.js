@@ -8,8 +8,10 @@ import langReducer from './language-reducer';
 // Combine Reducers
 const reducers = combineReducers({
     userData: userReducer,
-    userRegStatus: regReducer,
+    regState: regReducer,
     langState: langReducer
 });
 
 export default reducers;
+
+//https://daveceddia.com/where-fetch-data-redux/

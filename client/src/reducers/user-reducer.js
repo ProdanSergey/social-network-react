@@ -1,17 +1,19 @@
 import * as types from '../actions/action-types';
 
 const initialState = {
-  user: {}
+    userDataIsReady: false,
+    user: {}
 };
 
-const userReducer = function(state = initialState, action) {
+export default function userReducer(state = initialState, action) {
     switch(action.type) {
         case types.ADD_USER:
-            return { ...state, user: action.user };
-        case types.GET_USER:
-            return { ...state, user: action.user };
+            return { 
+                ...state, 
+                user: action.payload.user,
+                userDataIsReady: true
+            };
+        default:
+            return state;
     }
-    return state;
 }
-
-export default userReducer;
