@@ -1,17 +1,28 @@
 import * as types from '../actions/action-types';
 
 const initialState = {
-    userIsRegistered: false
+    regIsSuccess: false,
+    alertText: {}
 };
 
-const regReducer = function(state = initialState, action) {
+export default function regReducer(state = initialState, action) {
     switch(action.type) {
         case types.REG_SUCCESS:
-            return { ...state, user: action.user };
+            return { 
+                ...state, 
+                regIsSuccess: true
+            };
         case types.REG_FAILED:
-            return { ...state, user: action.user };
+            return { 
+                ...state, 
+                regIsSuccess: false
+             };
+        case types.REG_SUCCESS_TEXT:
+            return { 
+                ...state, 
+                alertText: action.payload.alertText
+            };
+        default:
+            return state;
     }
-    return state;
 }
-
-export default regReducer;
