@@ -7,6 +7,6 @@ import * as appController from '../controllers/server.controller';
 const router = express.Router();
 
 router.route('/')
-        .post(appController.uploadUserImage);
+        .post(appController.getUser);
         
 export default router;

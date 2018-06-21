@@ -1,29 +1,20 @@
 import * as types from './action-types';
 
-export function addUser(user) {
-  return {
-    type: types.ADD_USER,
-    user
-  };
-}
+export const addUser = user => ({
+  type: types.ADD_USER,
+  payload: { user }
+});
 
-export function getUser(userId) {
-  return {
-    type: types.GET_USER,
-    userId
-  };
-}
+export const storePassword = password => ({
+  type: types.STORE_USER_PASSWORD,
+  payload: { password }
+});
 
-export function updateUser(userProfile) {
-  return {
-    type: types.UPDATE_USER,
-    userProfile
-  };
-}
 
-export function deleteUser(userProfile) {
-  return {
-    type: types.DELETE_USER,
-    userProfile
-  };
-}
+export const formValid = () => ({
+  type: types.FORM_VALID
+});
+
+export const formInvalid = () => ({
+  type: types.FORM_INVALID
+});
