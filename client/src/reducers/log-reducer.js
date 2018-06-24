@@ -1,16 +1,16 @@
 import * as types from '../actions/action-types';
 
 const initialState = {
+    user: {},
     userDataIsReady: false,
-    formIsValid: false,
-    user: {}
+    formIsValid: false
 };
 
-export default function userReducer(state = initialState, action) {
+export default function logReducer(state = initialState, action) {
     switch(action.type) {
         case types.ADD_USER:
             return { 
-                ...state, 
+                ...state,
                 user: action.payload.user,
                 userDataIsReady: true
             };
