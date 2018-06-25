@@ -1,8 +1,6 @@
 import * as types from './action-types';
 
-export function toogleRegStatus(status) {
-  return {
-    type: types.REG_SUCCESS,
-    status
-  };
-}
+export const regResponse = response => ({
+  type: types.REG_RESPONSE,
+  payload: { response }
+});
