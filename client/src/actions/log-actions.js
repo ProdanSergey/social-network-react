@@ -1,14 +1,19 @@
 import * as types from './action-types';
 
-export const addUser = user => ({
-  type: types.ADD_USER,
+export const logData = user => ({
+  type: types.LOG_DATA,
   payload: { user }
 });
 
-export const formValid = () => ({
-  type: types.FORM_VALID
+export const logFormValid = () => ({
+  type: types.LOG_FORM_VALID
 });
 
-export const formInvalid = () => ({
-  type: types.FORM_INVALID
+export const logFormInvalid = () => ({
+  type: types.LOG_FORM_INVALID
+});
+
+export const logResponse = response => ({
+  type: types.LOG_RESPONSE,
+  payload: { response }
 });

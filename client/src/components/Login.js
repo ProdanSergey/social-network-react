@@ -1,10 +1,15 @@
 import React                from 'react';
 import { connect }          from 'react-redux';
 import $                    from 'jquery';
-import { Validation }       from '../assets/validation';
 import { saveState }        from '../assets/LocalStorage';
 import { loadTokenToStore } from '../actions/token-actions';
-import { addUser, formValid, formInvalid } from '../actions/log-actions';
+import { 
+    logData, 
+    logFormValid, 
+    logFormInvalid, 
+    logResponse 
+  }                         from '../actions/log-actions';
+import { Validation }       from '../assets/validation';
 
 const initialInput = "form-control";
 const validInput = "form-control is-valid";
@@ -31,14 +36,14 @@ class Login extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.userDataIsReady !== nextProps.userDataIsReady) {
+        if (this.props.user !== nextProps.user) {
             this.loadUser(nextProps.user);
         }
-        // if (this.props.response !== nextProps.response) {
-        //     if(nextProps.response.registered) {
-        //         this.props.history.push('/registration:success')
-        //     }
-        // }
+        if (this.props.response !== nextProps.response) {
+            if(nextProps.response.authorized) {
+              this.props.history.push('/')
+            }
+        }
     } 
 
     handleChange(event) {
@@ -58,8 +63,8 @@ class Login extends React.Component {
     
     handleBlur(event) {
         const inputs = this.state.inputs || false;
-        const valid = this.props.formValid
-        const invalid = this.props.formInvalid
+        const valid = this.props.logFormValid
+        const invalid = this.props.logFormInvalid
         const firstFalse = obj => {
           for (let field in obj) {
             if (!obj[field].isValid) return true;
@@ -78,11 +83,10 @@ class Login extends React.Component {
             for (let prop in dataToSerialize) {
                 data = {...data,  [prop]: dataToSerialize[prop].value}
             }
-            this.props.addUser(data)
+            this.props.logData(data)
         } else {
             console.log('form invalid')
         }
-        // this.loadUser(data)
     }
 
     loadUser(request) { 
@@ -95,70 +99,100 @@ class Login extends React.Component {
             success: (data, textStatus, jqXHR) => {
                 const body = jqXHR.responseJSON;
                 if (body.authorized) {
+                    this.props.logResponse({
+                        message: body.message,
+                        authorized: body.authorized,
+                    });
                     const token = {
                         authorized: body.authorized,
                         date: body.date,
                         token: body.token
                     };
+                    console.log(token)
                     let promise = new Promise((resolve, reject) => { resolve(saveState(token))});
-                    promise.then( result => this.props.loadTokenToStore(token)).then( result => this.props.history.push('/'))
+                    promise.then( result => this.props.loadTokenToStore(token))
                 } else {
-                    console.log(body.message)
+                    this.props.logResponse({
+                        message: body.message,
+                        authorized: body.authorized,
+                    });
                 }
             },
             error: error => {
-                console.log(error);
+                this.props.logResponse({
+                    message: error.message,
+                    authorized: error.authorized,
+                });
             }
         });
     }
 
     render() {
-        console.log(this.props)
         return (
-            <form onSubmit={this.handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="email">Email address</label>
-                    <input 
-                        type="email"
-                        name="email"
-                        className={
-                            typeof this.state.inputs.email === "undefined" ? 
-                            initialInput :
-                            (this.state.inputs.email.isFilled ?
-                             this.state.inputs.email.isValid ?
-                              validInput : 
-                                invalidInput : 
-                                  initialInput)}
-                          value={this.state.value} 
-                          onChange={this.handleChange}
-                          onBlur={this.handleBlur}
-                        aria-describedby="emailHelp" placeholder="Enter email"/>
-                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+            <div className="col-11">
+                <div className="row login">
+                    <div className="col-5">
+                        <form onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="email">Email address</label>
+                                <input 
+                                    type="email"
+                                    name="email"
+                                    className={
+                                        typeof this.state.inputs.email === "undefined" ? 
+                                        initialInput :
+                                        (this.state.inputs.email.isFilled ?
+                                        this.state.inputs.email.isValid ?
+                                        validInput : 
+                                            invalidInput : 
+                                            initialInput)}
+                                    value={this.state.value} 
+                                    onChange={this.handleChange}
+                                    onBlur={this.handleBlur}
+                                    aria-describedby="emailHelp" placeholder="Enter email"/>
+                                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <input 
+                                    type="password"
+                                    name="password"
+                                    className={
+                                        typeof this.state.inputs.password === "undefined" ? 
+                                        initialInput :
+                                        (this.state.inputs.password.isFilled ?
+                                        this.state.inputs.password.isValid ?
+                                        validInput : 
+                                            invalidInput : 
+                                            initialInput)}
+                                    value={this.state.value} 
+                                    onChange={this.handleChange}
+                                    onBlur={this.handleBlur}
+                                    placeholder="Password"/>
+                            </div>
+                            <div className="form-group d-flex">
+                            <div className="col-3">
+                                <button 
+                                type="submit" 
+                                className="btn btn-primary">
+                                    Submit
+                                </button>
+                            </div>
+                            <div className="col-9">
+                                <p 
+                                className="alert alert-warning mb-0" 
+                                role="alert" 
+                                hidden={!(!!this.props.response.message) && !this.props.response.authorized}>
+                                {this.props.response.message}</p>
+                            </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div className="col-7">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae qui alias, aspernatur quidem itaque aliquam harum porro cum facilis. Veritatis quae pariatur repellendus odio ex deserunt aliquid ad facere ipsum.
+                    </div>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input 
-                        type="password"
-                        name="password"
-                        className={
-                            typeof this.state.inputs.password === "undefined" ? 
-                            initialInput :
-                            (this.state.inputs.password.isFilled ?
-                             this.state.inputs.password.isValid ?
-                              validInput : 
-                                invalidInput : 
-                                  initialInput)}
-                          value={this.state.value} 
-                          onChange={this.handleChange}
-                          onBlur={this.handleBlur}
-                        placeholder="Password"/>
-                </div>
-                <button 
-                    type="submit" 
-                    className="btn btn-primary">
-                    Submit
-                </button>
-            </form>
+            </div>
         )
     }
 
@@ -168,7 +202,7 @@ const mapStateToProps = function(store) {
     return {
         user:             store.loginData.user,
         formIsValid:      store.loginData.formIsValid,
-        userDataIsReady:  store.userData.userDataIsReady,
+        response:         store.loginData.response,
         token:            store.tokenState.token
     }
 };
@@ -178,14 +212,17 @@ const mapDispatchToProps = (dispatch, state) => {
         loadTokenToStore: (token) => {
             dispatch(loadTokenToStore(token));
         },
-        addUser: (user) => {
-            dispatch(addUser(user));
+        logData: (user) => {
+            dispatch(logData(user));
         },
-        formValid: () => {
-            dispatch(formValid());
+        logFormValid: () => {
+            dispatch(logFormValid());
         },
-        formInvalid: () => {
-            dispatch(formInvalid());
+        logFormInvalid: () => {
+            dispatch(logFormInvalid());
+        },
+        logResponse: (response) => {
+            dispatch(logResponse(response));
         }
     };
 }

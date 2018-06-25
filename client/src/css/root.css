@@ -1,4 +1,9 @@
 :root {
     /* COLORS */
-    --main: #448ef6;
+    --main:          #f2f2f0;
+    --ui:            #ffffff;
+    --color-1:       #ff512f;
+    --color-2:       #f09819;
+    --color-3:       #2c2727;
+    --color-light:   #ffffff;
 }

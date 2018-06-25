@@ -11,13 +11,14 @@ const secret = 'mSgmyIh3gX';
 
 export const registration = (req,res) => {
     if (Object.keys(req.body).length === 0) {
-        res.status(204).send({
+        res.status(200).send({
             registered: false,
             message: 'Empty object'
         });
     }
     const password = PasswordGen();
-    const user = Object.assign({}, req.body, {password})
+    const avatar = Object.keys(req.files).length === 0 ? null : req.files.image.file;
+    const user = Object.assign({}, req.body, {password, avatar})
     const match = req.body.email;
     const newUser = new User(user);
     User.findOne({email: match}, (err, user) => {
@@ -56,7 +57,7 @@ export const login = (req, res) => {
                             const date = new Date();
                             const newSession = new Session({email: user.email, token, date});
                             newSession.save().then(item => {
-                                res.status(200).send({
+                                res.status(202).send({
                                     authorized: true,
                                     message: 'User logged in successfully',
                                     date,
@@ -71,7 +72,7 @@ export const login = (req, res) => {
                         }
                     });
                 } else {
-                    res.status(400).send({
+                    res.status(205).send({
                         authorized: false
                     });
                 }
@@ -87,14 +88,12 @@ export const login = (req, res) => {
 
 export const logout = (req, res) => {
     Session.findOneAndRemove({token: req.body}, (err, session) => {
-        console.log(err)
         if(err) {
             res.status(404).end()
         } 
         if(!session) {
             res.status(204).end()
         } else {
-            console.log(session)
             res.status(200).end()
         }
     });

@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-// import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 
 import { loadState } from './assets/LocalStorage'
@@ -14,8 +13,6 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './css/index.css';
 
 import App from './components/App';
-
-// const history = syncHistoryWithStore(BrowserHistory, store);
 
 // Dispatch user token to store
 const userState = loadState();
