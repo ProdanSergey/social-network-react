@@ -1,18 +1,16 @@
-import React from 'react';
-
-// Connect to Redux Store
-import { connect } from 'react-redux';
+import React          from 'react';
+import { connect }    from 'react-redux';
+import { WallHeader } from '../views/wall/header'
 
 class Home extends React.Component {
   
   render() {
     return (
-      <div className="col-12">
-        <h1>Hello dear user! {this.props.token !== undefined ? 
-        this.props.token.authorized ? 'You are login now!' :
-        'You need to register first' : 'You need to register first'}
-        </h1>
-      </div>
+      <article className="col-11 wall">
+        {this.props.token !== undefined ? 
+        this.props.token.authorized ? <WallHeader/> :
+        <h1>Hello dear user! Pls register, or login!</h1> : <h1>Hello dear user! Pls register, or login!</h1>}
+      </article>
     )
   }
 }

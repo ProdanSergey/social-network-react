@@ -1,28 +1,32 @@
 import * as types from '../actions/action-types';
 
 const initialState = {
+    formIsValid: false,
     user: {},
-    userDataIsReady: false,
-    formIsValid: false
+    response: {}
 };
 
 export default function logReducer(state = initialState, action) {
     switch(action.type) {
-        case types.ADD_USER:
+        case types.LOG_DATA:
             return { 
-                ...state,
+                ...state, 
                 user: action.payload.user,
-                userDataIsReady: true
             };
-        case types.FORM_VALID:
+        case types.LOG_FORM_VALID:
             return { 
                 ...state, 
                 formIsValid: true
             };
-        case types.FORM_INVALID:
+        case types.LOG_FORM_INVALID:
             return { 
                 ...state, 
                 formIsValid: false
+            };
+        case types.LOG_RESPONSE:
+            return { 
+                ...state, 
+                response: action.payload.response
             };
         default:
             return state;

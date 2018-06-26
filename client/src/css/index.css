@@ -1,6 +1,24 @@
 @import url("./root.css");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700|Oxygen:400,700&subset=cyrillic");
 #root {
   height: 100vh;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: -webkit-gradient(linear, left top, right top, from(#396afc), to(#2948ff));
+  background: -webkit-linear-gradient(left, #396afc, #2948ff);
+  background: -o-linear-gradient(left, #396afc, #2948ff);
+  background: linear-gradient(to right, #396afc, #2948ff);
+}
+
+h1, h2, h3 {
+  font-family: 'Oxygen', sans-serif;
 }
 
 .container {
@@ -9,18 +27,157 @@
 }
 
 .header {
-  height: 70px;
+  height: 90px;
+}
+
+.header .logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background-color: var(--color-1);
 }
 
 .header .navbar {
   height: 100%;
+  color: var(--color-light);
+  background-color: var(--color-3);
+}
+
+.header .navbar-brand {
+  color: inherit;
+  font-weight: bold;
+  font-family: 'Oxygen', sans-serif;
 }
 
 .main {
   min-height: 100%;
+  height: 1px;
+  background-color: var(--main);
 }
 
-.footer {
-  height: 70px;
-  background-color: var(--main);
+.main .sidebar {
+  background-color: var(--ui);
+}
+
+.main .sidebar__menu ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  list-style-type: none;
+}
+
+.main .sidebar__menu ul li {
+  margin: 1rem 0;
+}
+
+.main .sidebar__menu .icon {
+  display: block;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.main .sidebar__menu .account {
+  background-image: url("/icons/account.svg");
+}
+
+.main .sidebar__menu .friends {
+  background-image: url("/icons/friends.svg");
+}
+
+.main .sidebar__menu .news {
+  background-image: url("/icons/news.svg");
+}
+
+.main .sidebar__menu .search {
+  background-image: url("/icons/search.svg");
+}
+
+.main .sidebar__menu .settings {
+  background-image: url("/icons/settings.svg");
+}
+
+.main .wall, .main .registration, .main .login {
+  padding: 3rem 2rem;
+}
+
+.main .wall__header {
+  height: 400px;
+  position: relative;
+}
+
+.main .wall__header .image {
+  width: 100%;
+  height: 100%;
+}
+
+.main .wall__header .image img {
+  display: block;
+  height: inherit;
+  width: inherit;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center;
+}
+
+.main .wall__header .menu {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  background-color: var(--ui);
+}
+
+.main .wall__header .menu .user {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
+
+.main .wall__header .menu .user__pic {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border: 2px solid var(--color-light);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.main .wall__header .menu .user__pic img {
+  display: block;
+  height: inherit;
+  width: inherit;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center;
 }

@@ -14,7 +14,10 @@ import appAuthRoutes   from './routes/auth.route';
 const app = express();
 
 // express-busboy to parse multipart/form-data
-bb.extend(app);
+bb.extend(app, {
+  upload: true,
+  path: '.././client/public/images'
+});
 
 // allow-cors
 app.use(function(req,res,next){

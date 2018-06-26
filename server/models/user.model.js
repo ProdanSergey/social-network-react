@@ -35,6 +35,9 @@ var Schema = mongoose.Schema({
   },
   password: {
     type: String
+  },
+  avatar: {
+    type: String
   }
 });
 
