@@ -7,8 +7,9 @@ import bb               from 'express-busboy';
 import SourceMapSupport from 'source-map-support';
 
 // import routes
-import appRoutes        from './routes/server.route';
-import appAuthRoutes   from './routes/auth.route';
+import appRegRoutes        from './routes/reg.route';
+import appAuthRoutes       from './routes/auth.route';
+import appDataRoutes       from './routes/data.route';
 
 // define app
 const app = express();
@@ -47,8 +48,9 @@ mongoose.connect('mongodb://localhost/reactApp');
 // add Source Map Support
 SourceMapSupport.install();
 
-app.use('/api', appRoutes);
+app.use('/api/reg', appRegRoutes);
 app.use('/api/auth', appAuthRoutes);
+app.use('/api/data', appDataRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });

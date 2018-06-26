@@ -13,7 +13,6 @@ export const loadState = () => {
 
 export const removeState = () => {
     try {
-        console.log('triggered')
         localStorage.removeItem("USER_TOKEN");
     }
     catch (err) {

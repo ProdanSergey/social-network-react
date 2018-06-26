@@ -89,12 +89,30 @@ export const login = (req, res) => {
 export const logout = (req, res) => {
     Session.findOneAndRemove({token: req.body}, (err, session) => {
         if(err) {
-            res.status(404).end()
+            res.status(404).end();
         } 
         if(!session) {
-            res.status(204).end()
+            res.status(204).end();
         } else {
-            res.status(200).end()
+            res.status(200).end();
+        }
+    });
+}
+
+export const userInfo = (req, res) => {
+    Session.findOne({token: req.body}, (err, session) => {
+        if(err) {
+            res.status(404).end();
+        }
+        if(!session) {
+            res.status(204).end();
+        } else {
+            User.findOne({email: session.email}, (err, user) => {
+                const {avatar, firstName, middleName, lastName} = user;
+                setTimeout(()=>{
+                    res.status(200).send({avatar, firstName, middleName, lastName});
+                }, 2000) // For demo purpose only!
+            });
         }
     });
 }

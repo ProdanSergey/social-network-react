@@ -1,7 +1,7 @@
-import React from 'react';
-import Navigation from '../views/Navigation';
-import Main from '../views/Main';
-import { Sidebar } from '../views/wall/sidebar'
+import React        from 'react';
+import Navigation   from './Navigation';
+import Main         from './Main';
+import Sidebar      from './Sidebar';
 
 class App extends React.Component {
   render(){
@@ -9,8 +9,7 @@ class App extends React.Component {
     <div className="container">
       <Navigation />
       <main className="row main no-gutters">
-        <Sidebar />
-        <Main />
+        <Sidebar /><Main />
       </main>
     </div>
     )
