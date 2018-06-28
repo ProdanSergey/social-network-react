@@ -4,7 +4,7 @@ import '../css/footer.css';
 class Footer extends React.Component {
     render() {
       return (
-            <footer className="row d-flex align-items-center justify-content-between footer no-gutters">
+            <footer className="row d-flex align-items-center justify-content-between footer">
                 <div className="col-3">
                     <div className="copyright">Copyright © Anon</div>
                 </div>

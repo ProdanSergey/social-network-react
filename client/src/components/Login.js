@@ -30,9 +30,7 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        if(this.props.token !== undefined) {
-            if(this.props.token.authorized) this.props.history.push('/');
-        } 
+        if(this.props.token && this.props.token.authorized) this.props.history.push('/');  
     }
 
     componentWillReceiveProps(nextProps) {

@@ -30,9 +30,7 @@ class RegForm extends React.Component {
   } 
 
   componentDidMount() {
-    if(this.props.token !== undefined) {
-      if(this.props.token.authorized) this.props.history.push('/');
-    } 
+    if(this.props.token && this.props.token.authorized) this.props.history.push('/'); 
   }
 
   componentWillReceiveProps(nextProps) {
@@ -115,7 +113,7 @@ class RegForm extends React.Component {
 
   createUser(dataObject) {
     $.ajax({
-      url: '/api',
+      url: '/api/reg',
       method: 'post',
       accept: 'application/json',
       data: dataObject,
