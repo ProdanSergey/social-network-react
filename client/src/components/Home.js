@@ -8,7 +8,7 @@ class Home extends React.Component {
   render() {
     return (
       <article className="col-11 wall">
-        {this.props.token && this.props.token.authorized ? 
+        {this.props.token ? 
               <Wall/> :
                 <Welcome/>}
       </article>

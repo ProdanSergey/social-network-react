@@ -1,32 +1,9 @@
-import React                    from 'react';
-import { Link }                 from 'react-router-dom';
-import { connect }              from 'react-redux';
-import $                        from 'jquery';
-import { deleteTokenFromStore } from '../actions/token-actions';
-import { removeState }          from '../assets/LocalStorage';
+import React        from 'react';
+import { Link }     from 'react-router-dom';
+import { connect }  from 'react-redux';
+import { logout }   from '../actions/token-actions';
 
 class Navigation extends React.Component {
-
-    logout(request) { 
-        $.ajax({
-            url: '/api/auth',
-            method: 'delete',
-            accept: 'application/json',
-            contentType: 'application/json',
-            dataType: 'html',
-            data: JSON.stringify(request),
-            success: (data, textStatus, jqXHR) => {
-                const token = {
-                    authorized: false
-                }
-                this.props.deleteTokenFromStore(token);
-                removeState();
-            },
-            error: error => {
-                console.log (error)
-            }
-        });
-    }
 
     render() {
       return (
@@ -44,28 +21,20 @@ class Navigation extends React.Component {
                                     <Link 
                                         to='/registration' 
                                         className="nav-link" 
-                                        hidden={
-                                            this.props.token !== undefined ? 
-                                            this.props.token.authorized? true : false :
-                                            false}>Registration</Link>
+                                        hidden={this.props.token}>Registration</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link 
                                         to='/login' 
                                         className="nav-link"
-                                        hidden={
-                                            this.props.token !== undefined ? 
-                                            this.props.token.authorized ? true : false :
-                                            false}>Login</Link>
+                                        hidden={this.props.token}>Login</Link>
                                 </li>
                                 <li className="nav-item">
                                     <a 
                                         className="nav-link"
-                                        hidden={this.props.token !== undefined ?
-                                                this.props.token.authorized ? false : true :
-                                                true}
+                                        hidden={!this.props.token}
                                         href="/" 
-                                        onClick={(e) => {e.preventDefault(); this.logout(this.props.token.token)}}>
+                                        onClick={(e) => {e.preventDefault(); this.props.logout()}}>
                                         Logout</a>
                                 </li>
                             </ul>
@@ -86,8 +55,8 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = (dispatch, state) => {
     return {
-        deleteTokenFromStore: (token) => {
-            dispatch(deleteTokenFromStore(token))
+        logout: () => {
+            dispatch(logout())
         }
     }
 };

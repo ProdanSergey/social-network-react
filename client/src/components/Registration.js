@@ -4,7 +4,9 @@ import { validateInput }      from '../assets/validateInput';
 import { validateForm }       from '../assets/validateForm';
 import { inputClass }         from '../assets/inputsClassHendler';
 import { createSelectItems }  from '../assets/createSelectItems';
+import { saveState }          from '../assets/LocalStorage';
 
+import { loadTokenToStore }   from '../actions/token-actions';
 import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 import { push }               from 'connected-react-router';
@@ -27,6 +29,9 @@ class RegForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.response !== nextProps.response) {
       if (nextProps.response.registered) {
+        const token = nextProps.response.token;
+        saveState(token);
+        this.props.loadTokenToStore(token);
         this.props.push('/registration:success');
       }
     }
@@ -202,6 +207,9 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = (dispatch, state) => {
   return {
+    loadTokenToStore: (token) => {
+      dispatch(loadTokenToStore(token));
+    },
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
     },

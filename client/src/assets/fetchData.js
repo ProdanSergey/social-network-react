@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { loadState } from './LocalStorage'
 
 export const getUser = token => {
     return $.ajax({
@@ -6,7 +7,7 @@ export const getUser = token => {
         method: 'post',
         accept: 'application/json',
         contentType: 'application/json',
-        data: JSON.stringify(token)
+        headers: {'x-access-token': loadState()}
     });
 }
 

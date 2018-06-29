@@ -10,7 +10,7 @@ export default function tokenReducer(state = {}, action) {
         case types.DELETE_TOKEN:
             return {
                 ...state,
-                token: action.payload.token,
+                token: null,
             }
         default:
             return state;

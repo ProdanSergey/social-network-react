@@ -1,5 +1,4 @@
 import User         from '../models/user.model';
-import Session      from '../models/session.model';
 import PasswordGen  from './password';
 import jwt          from 'jsonwebtoken';
 
@@ -28,9 +27,11 @@ export const registration = (req,res) => {
                 message: 'Email entry duplicate'
             });
         } else {
+            const token = jwt.sign({ id: newUser._id }, secret, { expiresIn: 86400 });
             newUser.save().then(item => {
                 res.status(201).send({
                     registered: true,
+                    token,
                     message: 'User is created successfuly',
                     password
                 });
@@ -51,25 +52,11 @@ export const login = (req, res) => {
             const hash = user.password;
             bcrypt.compare(password, hash, function(err, result) {
                 if (result) {
-                    Session.findOne({email: user.email}, (err, session) => {
-                        if(!session) {
-                            const token = jwt.sign({ secret }, secret);
-                            const date = new Date();
-                            const newSession = new Session({email: user.email, token, date});
-                            newSession.save().then(item => {
-                                res.status(202).send({
-                                    authorized: true,
-                                    message: 'User logged in successfully',
-                                    date,
-                                    token
-                                });
-                            })
-                        } else {
-                            res.status(200).send({
-                                authorized: false,
-                                message: 'User already logged in',
-                            });
-                        }
+                    const token = jwt.sign({ id: user._id }, secret, { expiresIn: 86400 });
+                    res.status(202).send({
+                        authorized: true,
+                        token,
+                        message: 'User logged in successfully'
                     });
                 } else {
                     res.status(205).send({
@@ -86,34 +73,38 @@ export const login = (req, res) => {
     })
 }
 
-export const logout = (req, res) => {
-    Session.findOneAndRemove({token: req.body}, (err, session) => {
-        if(err) {
-            res.status(404).end();
-        } 
-        if(!session) {
-            res.status(204).end();
-        } else {
-            res.status(200).end();
-        }
-    });
-}
-
 export const userInfo = (req, res) => {
-    res.send(200).end()
-    // Session.findOne({token: req.body}, (err, session) => {
-    //     if(err) {
-    //         res.status(404).end();
-    //     }
-    //     if(!session) {
-    //         res.status(204).end();
-    //     } else {
-    //         User.findOne({email: session.email}, (err, user) => {
-    //             const {avatar, firstName, middleName, lastName} = user;
-    //             setTimeout(()=>{
-    //                 res.status(200).send({avatar, firstName, middleName, lastName});
-    //             }, 2000) // For demo purpose only!
-    //         });
-    //     }
-    // });
+    const token = req.headers['x-access-token'];
+    jwt.verify(token, secret, function(err, decoded) {
+        if(err) {
+            res.status(401).send({
+                auth: false, 
+                message: 'No token provided'
+            });
+        }
+        User.findById(decoded.id, function (err, user) {
+            if (err) {
+                res.status(500).send({
+                    auth: false, 
+                    message: 'Some problem'
+                });
+            }
+            if(!user) {
+                res.status(204).send({
+                    auth: false, 
+                    message: 'No user found'
+                });
+            } else {
+                const { firstName, middleName, lastName, avatar } = user;
+                res.status(202).send({
+                    auth: true,
+                    message: 'Authentication success',
+                    firstName,
+                    middleName,
+                    lastName,
+                    avatar : avatar.slice(avatar.indexOf('\images'))
+                });
+            }
+        });
+    });
 }

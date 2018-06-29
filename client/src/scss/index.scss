@@ -150,6 +150,15 @@ h1, h2, h3 {
         &__info {
             padding: 1.5rem;
             background-color: var(--color-light);
+            form {
+                position: relative;
+                padding-top: calc(24px + 7px * 2); 
+                .read-only-toggler {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                }
+            }
         }
         &__avatar {
             padding: 1.5rem;
