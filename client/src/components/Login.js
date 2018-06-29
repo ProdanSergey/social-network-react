@@ -1,128 +1,77 @@
-import React                from 'react';
-import { connect }          from 'react-redux';
-import $                    from 'jquery';
-import { saveState }        from '../assets/LocalStorage';
-import { loadTokenToStore } from '../actions/token-actions';
-import { 
-    logData, 
-    logFormValid, 
-    logFormInvalid, 
-    logResponse 
-  }                         from '../actions/log-actions';
-import { Validation }       from '../assets/validation';
+import React                  from 'react';
+import { connect }            from 'react-redux';
+import { validateInput }      from '../assets/validateInput';
+import { validateForm }       from '../assets/validateForm';
+import { inputClass }         from '../assets/inputsClassHendler';
+import { saveState }          from '../assets/LocalStorage';
 
-const initialInput = "form-control";
-const validInput = "form-control is-valid";
-const invalidInput = "form-control is-invalid";
+import { loadTokenToStore }   from '../actions/token-actions';
+import { storeFieldData }     from '../actions/form-actions';
+import { fetchUser }          from '../actions/user-actions';
+import { push }               from 'connected-react-router';
+
+import * as methods           from '../constants/fetch';
+
 
 class Login extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-          inputs: {
-    
-          }
+          inputs: {}
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentDidMount() {
-        if(this.props.token && this.props.token.authorized) this.props.history.push('/');  
-    }
-
     componentWillReceiveProps(nextProps) {
-        if (this.props.user !== nextProps.user) {
-            this.loadUser(nextProps.user);
-        }
         if (this.props.response !== nextProps.response) {
             if(nextProps.response.authorized) {
-              this.props.history.push('/')
+                const token = nextProps.response.token;
+                saveState(token);
+                this.props.loadTokenToStore(token);
             }
+        }
+        if (this.props.token !== nextProps.token) {
+            this.props.push('/');
         }
     } 
 
     handleChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        const type = target.type;
-          this.setState({inputs: {...this.state.inputs, 
-            [name]: {
-              value,
-              isFilled: !!value.length,
-              isValid: Validation(type, value)
+        const { value, name, type } = event.target;
+            this.setState({inputs: {...this.state.inputs, 
+                [name]: {
+                isFilled: !!value.length,
+                isValid: validateInput(type, value)
+                }
             }
-          }
         });
     }
     
     handleBlur(event) {
-        const inputs = this.state.inputs || false;
-        const valid = this.props.logFormValid
-        const invalid = this.props.logFormInvalid
-        const firstFalse = obj => {
-          for (let field in obj) {
-            if (!obj[field].isValid) return true;
-          }
-          return false;
+        let { value, name } = event.target;
+            if(!!value.length) {
+            const { isValid } = this.state.inputs[name]
+            if(isValid) {
+                this.props.storeFieldData(name, value, true);
+            } else {
+                this.props.storeFieldData(name, value, false);
+            }
         }
-        firstFalse(inputs) ? invalid() : valid();
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        const valid = this.props.formIsValid;
-        if (valid) {
-            let data = {};
-            let dataToSerialize = this.state.inputs;
-            for (let prop in dataToSerialize) {
-                data = {...data,  [prop]: dataToSerialize[prop].value}
-            }
-            this.props.logData(data)
+        const form = validateForm({
+            data: this.props.form, 
+            asFormData: false
+        });
+        if (form) {
+            this.props.fetchUser(form, methods.AUTH_USER);
         } else {
             console.log('form invalid')
         }
-    }
-
-    loadUser(request) { 
-        $.ajax({
-            url: '/api/auth',
-            method: 'post',
-            accept: 'application/json',
-            contentType: 'application/json',
-            data: JSON.stringify(request),
-            success: (data, textStatus, jqXHR) => {
-                const body = jqXHR.responseJSON;
-                if (body.authorized) {
-                    this.props.logResponse({
-                        message: body.message,
-                        authorized: body.authorized,
-                    });
-                    const token = {
-                        authorized: body.authorized,
-                        date: body.date,
-                        token: body.token
-                    };
-                    console.log(token)
-                    let promise = new Promise((resolve, reject) => { resolve(saveState(token))});
-                    promise.then( result => this.props.loadTokenToStore(token))
-                } else {
-                    this.props.logResponse({
-                        message: body.message,
-                        authorized: body.authorized,
-                    });
-                }
-            },
-            error: error => {
-                this.props.logResponse({
-                    message: error.message,
-                    authorized: error.authorized,
-                });
-            }
-        });
     }
 
     render() {
@@ -136,15 +85,7 @@ class Login extends React.Component {
                                 <input 
                                     type="email"
                                     name="email"
-                                    className={
-                                        typeof this.state.inputs.email === "undefined" ? 
-                                        initialInput :
-                                        (this.state.inputs.email.isFilled ?
-                                        this.state.inputs.email.isValid ?
-                                        validInput : 
-                                            invalidInput : 
-                                            initialInput)}
-                                    value={this.state.value} 
+                                    className={inputClass(this.state.inputs.email)}
                                     onChange={this.handleChange}
                                     onBlur={this.handleBlur}
                                     aria-describedby="emailHelp" placeholder="Enter email"/>
@@ -155,34 +96,18 @@ class Login extends React.Component {
                                 <input 
                                     type="password"
                                     name="password"
-                                    className={
-                                        typeof this.state.inputs.password === "undefined" ? 
-                                        initialInput :
-                                        (this.state.inputs.password.isFilled ?
-                                        this.state.inputs.password.isValid ?
-                                        validInput : 
-                                            invalidInput : 
-                                            initialInput)}
-                                    value={this.state.value} 
+                                    className={inputClass(this.state.inputs.password)}
                                     onChange={this.handleChange}
                                     onBlur={this.handleBlur}
                                     placeholder="Password"/>
                             </div>
-                            <div className="form-group d-flex">
-                            <div className="col-3">
+                            <div className="form-group">
                                 <button 
-                                type="submit" 
+                                type="submit"
+                                disabled={this.props.fetching}
                                 className="btn btn-primary">
                                     Submit
                                 </button>
-                            </div>
-                            <div className="col-9">
-                                <p 
-                                className="alert alert-warning mb-0" 
-                                role="alert" 
-                                hidden={!(!!this.props.response.message) && !this.props.response.authorized}>
-                                {this.props.response.message}</p>
-                            </div>
                             </div>
                         </form>
                     </div>
@@ -198,9 +123,9 @@ class Login extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        user:             store.loginData.user,
-        formIsValid:      store.loginData.formIsValid,
-        response:         store.loginData.response,
+        form:             store.formData.form,
+        fetching:         store.userData.fetching,
+        response:         store.userData.response,
         token:            store.tokenState.token
     }
 };
@@ -210,17 +135,14 @@ const mapDispatchToProps = (dispatch, state) => {
         loadTokenToStore: (token) => {
             dispatch(loadTokenToStore(token));
         },
-        logData: (user) => {
-            dispatch(logData(user));
+        storeFieldData: (name, value, flag) => {
+            dispatch(storeFieldData(name, value, flag));
+          },
+        fetchUser: (userForm, method) => {
+            dispatch(fetchUser(userForm, method));
         },
-        logFormValid: () => {
-            dispatch(logFormValid());
-        },
-        logFormInvalid: () => {
-            dispatch(logFormInvalid());
-        },
-        logResponse: (response) => {
-            dispatch(logResponse(response));
+        push: (path) => {
+            dispatch(push(path));
         }
     };
 }

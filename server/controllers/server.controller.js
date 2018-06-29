@@ -100,19 +100,20 @@ export const logout = (req, res) => {
 }
 
 export const userInfo = (req, res) => {
-    Session.findOne({token: req.body}, (err, session) => {
-        if(err) {
-            res.status(404).end();
-        }
-        if(!session) {
-            res.status(204).end();
-        } else {
-            User.findOne({email: session.email}, (err, user) => {
-                const {avatar, firstName, middleName, lastName} = user;
-                setTimeout(()=>{
-                    res.status(200).send({avatar, firstName, middleName, lastName});
-                }, 2000) // For demo purpose only!
-            });
-        }
-    });
+    res.send(200).end()
+    // Session.findOne({token: req.body}, (err, session) => {
+    //     if(err) {
+    //         res.status(404).end();
+    //     }
+    //     if(!session) {
+    //         res.status(204).end();
+    //     } else {
+    //         User.findOne({email: session.email}, (err, user) => {
+    //             const {avatar, firstName, middleName, lastName} = user;
+    //             setTimeout(()=>{
+    //                 res.status(200).send({avatar, firstName, middleName, lastName});
+    //             }, 2000) // For demo purpose only!
+    //         });
+    //     }
+    // });
 }

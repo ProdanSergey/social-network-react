@@ -80,7 +80,7 @@ class Navigation extends React.Component {
 const mapStateToProps = function(store) {
     return {
         token: store.tokenState.token,
-        response: store.regData.response
+        response: store.userData.response
     }
 };
 

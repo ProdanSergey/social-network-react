@@ -1,22 +1,10 @@
 import React                 from 'react';
-import { loadUserToStore }   from '../actions/user-actions';
-import { getUser }           from '../assets/userData';
 import { connect }           from 'react-redux';
 
 class Account extends React.Component {
 
     componentDidMount() {
-        if(!(this.props.token && this.props.token.authorized)) {
-            this.props.history.push('/');
-        } else {
-            const token = this.props.token.token;
-            if (!this.props.user) {
-                getUser(token).then(user => {
-                    let avatar = user.avatar.replace(/..\\client\\public/, '')
-                    this.props.loadUserToStore({...user, avatar})
-                })
-            }
-        }
+        
     }
 
     render() {
@@ -124,16 +112,13 @@ class Account extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        user: store.userData.user,
         token: store.tokenState.token
     }
 };
   
   const mapDispatchToProps = (dispatch, state) => {
     return {
-        loadUserToStore: (user) => {
-            dispatch(loadUserToStore(user))
-        }
+
     }
 };
   

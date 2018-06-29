@@ -1,18 +1,10 @@
 import React                 from 'react';
-import { loadUserToStore }   from '../actions/user-actions';
-import { getUser }           from '../assets/userData';
 import { connect }           from 'react-redux';
 
 class Wall extends React.Component {
 
     componentDidMount() {
-        const token = this.props.token.token;
-        if (!this.props.user) {
-            getUser(token).then(user => {
-                let avatar = user.avatar.replace(/..\\client\\public/, '')
-                this.props.loadUserToStore({...user, avatar})
-            })
-        }
+
     }
 
     render() {
@@ -58,7 +50,7 @@ class Wall extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        user: store.userData.user,
+        user: store.formData.user,
         token: store.tokenState.token
 
     }
@@ -66,9 +58,7 @@ const mapStateToProps = function(store) {
   
   const mapDispatchToProps = (dispatch, state) => {
     return {
-        loadUserToStore: (user) => {
-            dispatch(loadUserToStore(user))
-        }
+        
     }
 };
   
