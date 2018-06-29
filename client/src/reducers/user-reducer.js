@@ -1,11 +1,30 @@
 import * as types from '../actions/action-types';
 
-export default function userReducer(state = {}, action) {
+const initialState = {
+    fetching: false,
+    response: {}
+};
+
+export default function registrationReducer(state = initialState, action) {
     switch(action.type) {
-        case types.LOAD_USER_TO_STORE:
-            return { 
-                ...state, 
-                user: action.payload.user,
+        case types.FETCH_USER_BEGIN:
+            return {
+              ...state,
+              fetching: true,
+            };
+      
+        case types.FETCH_USER_SUCCESS:
+            return {
+              ...state,
+              fetching: false,
+              response: action.payload.response
+            };
+      
+        case types.FETCH_USER_FAILURE:
+            return {
+              ...state,
+              fetching: false,
+              response: action.payload.response
             };
         default:
             return state;

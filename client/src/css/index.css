@@ -199,6 +199,17 @@ h1, h2, h3 {
   background-color: var(--color-light);
 }
 
+.main .account__info form {
+  position: relative;
+  padding-top: calc(24px + 7px * 2);
+}
+
+.main .account__info form .read-only-toggler {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .main .account__avatar {
   padding: 1.5rem;
   background-color: var(--color-light);

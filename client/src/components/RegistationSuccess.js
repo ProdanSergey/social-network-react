@@ -3,12 +3,6 @@ import { connect } from 'react-redux';
 
 class RegSuccess extends React.Component {
     
-    componentDidMount() {
-        if(this.props.token !== undefined) {
-            if(this.props.token.authorized) this.props.history.push('/');
-        }
-    }
-
     render() {
         return(
             <div className="col-11">
@@ -17,8 +11,7 @@ class RegSuccess extends React.Component {
                         <p>You are successfully finished registration! You can start using your account now. Have a nice day!</p>
                         <hr/>
                     <p className="mb-0">Your password is <span className="d-inline bg-primary text-white ">
-                            {   this.props.response ?
-                                this.props.response.password : ''}
+                            {this.props.response ? this.props.response.password : ''}
                         </span> remember it to be able login next time
                     </p>
                 </div>
@@ -29,8 +22,7 @@ class RegSuccess extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        response: store.regData.response,
-        token:    store.tokenState.token
+        response: store.userData.response
     }
 };
 

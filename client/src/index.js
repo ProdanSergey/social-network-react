@@ -1,9 +1,10 @@
 import React                        from 'react';
 import { render }                   from 'react-dom';
-import { BrowserRouter as Router }  from 'react-router-dom';
 import { Provider }                 from 'react-redux';
+import { ConnectedRouter }          from 'connected-react-router';
+import BrowserHistory               from './history';
 
-import { loadState }                from './assets/LocalStorage'
+import { loadState }                from './assets/LocalStorage';
 import { loadTokenToStore }         from './actions/token-actions';
 
 import store from './store/store';
@@ -20,8 +21,8 @@ if (userState) {
 
 render((
   <Provider store={store}>
-  <Router>
-    <App />
-  </Router>
+    <ConnectedRouter history={BrowserHistory}>
+        <App />
+    </ConnectedRouter>
   </Provider>
 ), document.getElementById('root'));

@@ -1,20 +1,17 @@
-import React          from 'react';
-import { connect }    from 'react-redux';
-import $              from 'jquery';
-import { 
-  regData, 
-  regFormValid, 
-  regFormInvalid, 
-  regResponse 
-}                     from '../actions/reg-actions';
-import { Validation } from '../assets/validation';
+import React                  from 'react';
+import { connect }            from 'react-redux';
+import { validateInput }      from '../assets/validateInput';
+import { validateForm }       from '../assets/validateForm';
+import { inputClass }         from '../assets/inputsClassHendler';
+import { createSelectItems }  from '../assets/createSelectItems';
+import { saveState }          from '../assets/LocalStorage';
 
-// Input classNames
-const initialInput = "form-control";
-const validInput = "form-control is-valid";
-const invalidInput = "form-control is-invalid";
+import { loadTokenToStore }   from '../actions/token-actions';
+import { storeFieldData }     from '../actions/form-actions';
+import { fetchUser }          from '../actions/user-actions';
+import { push }               from 'connected-react-router';
 
-// Component constructor
+import * as methods           from '../constants/fetch';
 
 class RegForm extends React.Component {
   
@@ -29,124 +26,66 @@ class RegForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   } 
 
-  componentDidMount() {
-    if(this.props.token && this.props.token.authorized) this.props.history.push('/'); 
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (this.props.user !== nextProps.user) {
-      this.createUser(nextProps.user);
-    }
     if (this.props.response !== nextProps.response) {
       if (nextProps.response.registered) {
-        this.props.history.push('/registration:success');
+        const token = nextProps.response.token;
+        saveState(token);
+        this.props.loadTokenToStore(token);
+        this.props.push('/registration:success');
       }
     }
   } 
 
   handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    const type = target.type;
+    const { value, name, type } = event.target;
       this.setState({inputs: {...this.state.inputs, 
         [name]: {
-          value,
           isFilled: !!value.length,
-          isValid: Validation(type, value)
+          isValid: validateInput(type, value)
         }
       }
     });
   }
 
   handleBlur(event) {
-    const inputs = this.state.inputs || false;
-    const valid = this.props.regFormValid
-    const invalid = this.props.regFormInvalid
-    const firstFalse = obj => {
-      for (let field in obj) {
-        if (!obj[field].isValid) return true;
+    let { value, name, files, type} = event.target;
+    if(!!value.length) {
+      const { isValid } = this.state.inputs[name]
+      if(isValid) {
+        this.props.storeFieldData(name, type !== 'file' ? value : files[0], true);
+      } else {
+        this.props.storeFieldData(name, type !== 'file' ? value : files[0], false);
       }
-      return false;
     }
-    firstFalse(inputs) ? invalid() : valid();
   }
 
   handleUpload(event) {
-    const target = event.target;
-    const image = target.files[0];
-    const name = target.name;
-    if (!image) {
-      this.setState({inputs: {...this.state.inputs, 
-          [name]: {
-            value: null,
-            isFilled: false
-          }
-        }
-      }) 
-    return
-    }
+    console.dir(event.target)
+    const { files, name, type } = event.target;
+    const image = files[0];
       this.setState({inputs: {...this.state.inputs, 
         [name]: {
-          value: image,
           isFilled: !!image,
-          isValid: (image.size > 4e+4 && image.size < 5e+6) || image.type !== 'image/jpeg'
+          isValid: image ? validateInput(type, image) : false
         }
-      }
-    })
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-    const valid = this.props.formIsValid;
-    if (valid) {
-      var form = new FormData();
-      let dataToSerialize = this.state.inputs;
-      for (let prop in dataToSerialize) {
-        form.append(`${prop}`, dataToSerialize[prop].value)
-      }
-      this.props.regData(form);
-    } else {
-      console.log('form invalid')
-    }
-  }
-
-  createUser(dataObject) {
-    $.ajax({
-      url: '/api/reg',
-      method: 'post',
-      accept: 'application/json',
-      data: dataObject,
-      contentType: false,
-      processData: false,
-      success: (data, textStatus, jqXHR) => {
-        if (jqXHR.status === 201) {
-          this.props.regResponse({
-            message: data.message,
-            registered: data.registered,
-            password: data.password
-          });
-        } else {
-          this.props.regResponse({
-            message: data.message,
-            registered: data.registered,
-          });
-        }
-      },
-      error: error => {
-        console.log(error);
       }
     });
   }
 
-  createSelectItems(from, to) {
-    let items = [];
-    for(let i = from; i <= to; i++) {
-      items.push(<option key={i} value={i}>{i}</option>)
+  handleSubmit(event) {
+    event.preventDefault();
+    const form = validateForm({
+      data: this.props.form, 
+      asFormData: true
+    });
+    if (form) {
+      this.props.fetchUser(form, methods.ADD_USER);
+    } else {
+      console.log('form invalid')
     }
-    return items;
   }
-
+  
   render() {
     return(
       <div className="col-11">
@@ -158,15 +97,7 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="firstName" 
-                  className={
-                    typeof this.state.inputs.firstName === "undefined" ? 
-                    initialInput :
-                    (this.state.inputs.firstName.isFilled ?
-                    this.state.inputs.firstName.isValid ?
-                      validInput : 
-                        invalidInput : 
-                          initialInput)}
-                  value={this.state.value} 
+                  className={inputClass(this.state.inputs.firstName)}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
                   placeholder="Enter your first name" required="required"/>
@@ -177,15 +108,7 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="middleName"
-                  className={
-                    typeof this.state.inputs.middleName === "undefined" ? 
-                    initialInput :
-                    (this.state.inputs.middleName.isFilled ?
-                    this.state.inputs.middleName.isValid ?
-                      validInput : 
-                        invalidInput : 
-                          initialInput)}
-                  value={this.state.value} 
+                  className={inputClass(this.state.inputs.middleName)}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
                   placeholder="Enter your middle name"/>
@@ -196,15 +119,7 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="lastName"
-                  className={
-                    typeof this.state.inputs.lastName === "undefined" ? 
-                    initialInput :
-                    (this.state.inputs.lastName.isFilled ?
-                    this.state.inputs.lastName.isValid ?
-                      validInput : 
-                        invalidInput : 
-                          initialInput)}
-                  value={this.state.value} 
+                  className={inputClass(this.state.inputs.lastName)}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
                   placeholder="Enter your last name" required="required"/>
@@ -215,13 +130,8 @@ class RegForm extends React.Component {
                     <div className="col-6">
                       <label htmlFor="gender">Gender</label>
                       <select 
-                        className={
-                          typeof this.state.inputs.gender === "undefined" ? 
-                          initialInput :
-                          (this.state.inputs.gender.isFilled ?
-                            validInput : 
-                              initialInput)}
                         name="gender"
+                        className={inputClass(this.state.inputs.gender)}
                         onChange={this.handleChange}
                         onBlur={this.handleBlur}
                         defaultValue="default">
@@ -233,18 +143,13 @@ class RegForm extends React.Component {
                     <div className="col-6">
                       <label htmlFor="age">Age</label>
                       <select 
-                        className={
-                          typeof this.state.inputs.age === "undefined" ? 
-                          initialInput :
-                          (this.state.inputs.age.isFilled ?
-                            validInput : 
-                              initialInput)}
                         name="age"
+                        className={inputClass(this.state.inputs.age)}
                         onChange={this.handleChange}
                         onBlur={this.handleBlur}
                         defaultValue="default">
                         <option disabled value="default">Choose...</option>
-                        {this.createSelectItems(1,99)}
+                        {createSelectItems(1,99)}
                       </select>
                     </div>
                 </div>
@@ -254,15 +159,7 @@ class RegForm extends React.Component {
                 <input 
                   type="email"
                   name="email"
-                  className={
-                    typeof this.state.inputs.email === "undefined" ? 
-                    initialInput :
-                    (this.state.inputs.email.isFilled ?
-                    this.state.inputs.email.isValid ?
-                      validInput : 
-                        invalidInput : 
-                          initialInput)}
-                  value={this.state.value}
+                  className={inputClass(this.state.inputs.email)}
                   onChange={this.handleChange}
                   onBlur={this.handleBlur}
                   aria-describedby="emailHelp"
@@ -273,34 +170,19 @@ class RegForm extends React.Component {
                 <label htmlFor="image">Choose photo...</label>
                 <input
                   type="file"
-                  className={
-                    typeof this.state.inputs.image === "undefined" ? 
-                    initialInput :
-                    (this.state.inputs.image.isFilled ?
-                    this.state.inputs.image.isValid ?
-                      validInput : 
-                        invalidInput : 
-                          initialInput)}
+                  className={inputClass(this.state.inputs.image)}
                   name="image"
                   onChange={this.handleUpload}
                   onBlur={this.handleBlur}
                   />
               </div>
-              <div className="form-group d-flex">
-                <div className="col-3">
-                  <button 
-                    type="submit" 
-                    className="btn btn-primary">
-                      Submit
-                  </button>
-                </div>
-                <div className="col-9">
-                  <p 
-                    className="alert alert-warning mb-0" 
-                    role="alert" 
-                    hidden={!(!!this.props.response.message)}>
-                    {this.props.response.message}</p>
-                </div>
+              <div className="form-group">
+                <button 
+                  type="submit"
+                  disabled={this.props.fetching}
+                  className="btn btn-primary">
+                    Submit
+                </button>
               </div>
             </form>
           </div>
@@ -317,26 +199,25 @@ class RegForm extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-    user:             store.regData.user,
-    formIsValid:      store.regData.formIsValid,
-    response:         store.regData.response,
-    token:            store.tokenState.token
+    form:  store.formData.form,
+    fetching: store.userData.fetching,
+    response: store.userData.response
   }
 };
 
 const mapDispatchToProps = (dispatch, state) => {
   return {
-    regData: (user) => {
-      dispatch(regData(user));
+    loadTokenToStore: (token) => {
+      dispatch(loadTokenToStore(token));
     },
-    regFormInvalid: () => {
-      dispatch(regFormInvalid());
+    storeFieldData: (name, value, flag) => {
+      dispatch(storeFieldData(name, value, flag));
     },
-    regFormValid: () => {
-      dispatch(regFormValid());
+    fetchUser: (userForm, method) => {
+      dispatch(fetchUser(userForm, method));
     },
-    regResponse: (response) => {
-      dispatch(regResponse(response))
+    push: (path) => {
+      dispatch(push(path));
     }
   }
 };
