@@ -153,6 +153,12 @@ h1, h2, h3 {
             form {
                 position: relative;
                 padding-top: calc(24px + 7px * 2); 
+                .data-field {
+                    padding: .375rem .75rem;
+                    margin-bottom:1rem;
+                    border: 1px solid;
+                    border-radius: 5px;
+                }
                 .read-only-toggler {
                     position: absolute;
                     top: 0;

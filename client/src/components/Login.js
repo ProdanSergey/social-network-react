@@ -6,7 +6,9 @@ import { inputClass }         from '../assets/inputsClassHendler';
 import { saveState }          from '../assets/LocalStorage';
 
 import { loadTokenToStore }   from '../actions/token-actions';
-import { storeFieldData }     from '../actions/form-actions';
+import { 
+    storeFieldData, 
+    clearFormData }           from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 import { push }               from 'connected-react-router';
 
@@ -31,6 +33,7 @@ class Login extends React.Component {
                 const token = nextProps.response.token;
                 saveState(token);
                 this.props.loadTokenToStore(token);
+                this.props.clearFormData();
             }
         }
         if (this.props.token !== nextProps.token) {
@@ -137,7 +140,10 @@ const mapDispatchToProps = (dispatch, state) => {
         },
         storeFieldData: (name, value, flag) => {
             dispatch(storeFieldData(name, value, flag));
-          },
+        },
+        clearFormData: () => {
+            dispatch(clearFormData());
+        },
         fetchUser: (userForm, method) => {
             dispatch(fetchUser(userForm, method));
         },

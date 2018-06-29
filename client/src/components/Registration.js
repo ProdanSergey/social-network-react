@@ -7,7 +7,9 @@ import { createSelectItems }  from '../assets/createSelectItems';
 import { saveState }          from '../assets/LocalStorage';
 
 import { loadTokenToStore }   from '../actions/token-actions';
-import { storeFieldData }     from '../actions/form-actions';
+import { 
+  storeFieldData, 
+  clearFormData }             from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 import { push }               from 'connected-react-router';
 
@@ -32,6 +34,7 @@ class RegForm extends React.Component {
         const token = nextProps.response.token;
         saveState(token);
         this.props.loadTokenToStore(token);
+        this.props.clearFormData();
         this.props.push('/registration:success');
       }
     }
@@ -174,7 +177,7 @@ class RegForm extends React.Component {
                   name="image"
                   onChange={this.handleUpload}
                   onBlur={this.handleBlur}
-                  />
+                  required="required"/>
               </div>
               <div className="form-group">
                 <button 
@@ -212,6 +215,9 @@ const mapDispatchToProps = (dispatch, state) => {
     },
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
+    },
+    clearFormData: () => {
+      dispatch(clearFormData());
     },
     fetchUser: (userForm, method) => {
       dispatch(fetchUser(userForm, method));
