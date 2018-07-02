@@ -1,50 +1,43 @@
 import React                 from 'react';
-import { validateInput }     from '../assets/validateInput';
 import { inputClass }        from '../assets/inputsClassHendler';
 
 class AccountInput extends React.Component {
 
     constructor(props){
         super(props)
-        this.state = {
-            inputs: {}
-        }
-        this.handleChange = this.handleChange.bind(this);
-    }
 
-    update = (event) => {
-        event.preventDefault();
-        const target = document.querySelector(`input[name="${event.target.name}"]`);
-        const { name, value } = target;
-        this.props.onUpdate(value);
-    };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
 
     handleChange(event) {
         const { value, name, type } = event.target;
-            this.setState({inputs: {...this.state.inputs, 
-                [name]: {
-                    isFilled: !!value.length,
-                    isValid: validateInput(type, value)
-                }
-            }
-        });
+        this.props.onUpdate({event: 'change', value, name, type});
+    }
+    handleSubmit(event) {
+        event.preventDefault();
+        const target = document.querySelector(`input[name="${event.target.name}"]`);
+        const { name, value } = target;
+        this.props.onUpdate({event: 'submit', name, value});
     }
 
     render () {
+        console.log(this.props)
+        const { fieldName, placeholder, form } = this.props.passValue
         return (
             <div className="input-group mb-3">
                 <input 
                     type="text"
-                    name={this.props.passValue.fieldName}
-                    className={inputClass(this.state.inputs[this.props.passValue.fieldName])}
-                    placeholder={this.props.passValue.placeholder}
+                    name={fieldName}
+                    className={inputClass(form[fieldName])}
+                    placeholder={placeholder}
                     onChange={this.handleChange}/>
                 <div className="input-group-append">
                     <button 
                     className="btn btn-outline-secondary" 
                     type="button"
-                    name={this.props.passValue.fieldName}
-                    onClick={this.update}>
+                    name={fieldName}
+                    onClick={this.handleSubmit}>
                     Send</button>
                 </div>
             </div>

@@ -8,23 +8,24 @@ import Spinner from '../views/Spinner'
 class Wall extends React.Component {
 
     componentDidMount() {
-        if (!this.props.response.auth)
+        if (!this.props.response.authenticated)
             this.props.fetchUser(this.props.token, methods.GET_USER);
     }
 
     render() {
-        if (this.props.fetching) return <Spinner/>
+        const { response, fetching } = this.props
+        if (fetching) return <Spinner/>
         return(
             <div className="wall__header">
                 <div className="image"><img src="/mount.jpeg" alt=""/></div>
                 <div className="menu">
                 <div className="user">
                     <div className="user__pic">
-                    <img src={this.props.response.avatar}
+                    <img src={response.avatar}
                     alt="user avatar"/>
                     </div>
                     <div className="user__name">
-                    <h2>{this.props.response.firstName +' '+ this.props.response.lastName}</h2>
+                    <h2>{response.firstName +' '+ response.lastName}</h2>
                     </div>
                 </div>
                 </div> 

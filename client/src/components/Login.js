@@ -1,16 +1,12 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
-import { validateInput }      from '../assets/validateInput';
 import { validateForm }       from '../assets/validateForm';
 import { inputClass }         from '../assets/inputsClassHendler';
-import { saveState }          from '../assets/LocalStorage';
 
-import { loadTokenToStore }   from '../actions/token-actions';
 import { 
     storeFieldData, 
     clearFormData }           from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
-import { push }               from 'connected-react-router';
 
 import * as methods           from '../constants/fetch';
 
@@ -19,51 +15,20 @@ class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-          inputs: {}
-        };
+    
         this.handleChange = this.handleChange.bind(this);
-        this.handleBlur = this.handleBlur.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.response !== nextProps.response) {
-            if(nextProps.response.authorized) {
-                const token = nextProps.response.token;
-                saveState(token);
-                this.props.loadTokenToStore(token);
-                this.props.clearFormData();
-            }
-        }
-        if (this.props.token !== nextProps.token) {
-            this.props.push('/');
-        }
-    } 
+    componentWillUnmount() {
+        this.props.clearFormData();
+    }
 
     handleChange(event) {
-        const { value, name, type } = event.target;
-            this.setState({inputs: {...this.state.inputs, 
-                [name]: {
-                isFilled: !!value.length,
-                isValid: validateInput(type, value)
-                }
-            }
-        });
+        let { value, name, type } = event.target;
+        this.props.storeFieldData(name, type, value);
     }
     
-    handleBlur(event) {
-        let { value, name } = event.target;
-            if(!!value.length) {
-            const { isValid } = this.state.inputs[name]
-            if(isValid) {
-                this.props.storeFieldData(name, value, true);
-            } else {
-                this.props.storeFieldData(name, value, false);
-            }
-        }
-    }
-
     handleSubmit(event) {
         event.preventDefault();
         const form = validateForm({
@@ -78,6 +43,10 @@ class Login extends React.Component {
     }
 
     render() {
+        const {
+            form,
+            fetching
+        } = this.props
         return (
             <div className="col-11">
                 <div className="row login">
@@ -88,9 +57,8 @@ class Login extends React.Component {
                                 <input 
                                     type="email"
                                     name="email"
-                                    className={inputClass(this.state.inputs.email)}
+                                    className={inputClass(form.email)}
                                     onChange={this.handleChange}
-                                    onBlur={this.handleBlur}
                                     aria-describedby="emailHelp" placeholder="Enter email"/>
                                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
                             </div>
@@ -99,15 +67,14 @@ class Login extends React.Component {
                                 <input 
                                     type="password"
                                     name="password"
-                                    className={inputClass(this.state.inputs.password)}
+                                    className={inputClass(form.password)}
                                     onChange={this.handleChange}
-                                    onBlur={this.handleBlur}
                                     placeholder="Password"/>
                             </div>
                             <div className="form-group">
                                 <button 
                                 type="submit"
-                                disabled={this.props.fetching}
+                                disabled={fetching}
                                 className="btn btn-primary">
                                     Submit
                                 </button>
@@ -128,16 +95,11 @@ const mapStateToProps = function(store) {
     return {
         form:             store.formData.form,
         fetching:         store.userData.fetching,
-        response:         store.userData.response,
-        token:            store.tokenState.token
     }
 };
 
 const mapDispatchToProps = (dispatch, state) => {
     return {
-        loadTokenToStore: (token) => {
-            dispatch(loadTokenToStore(token));
-        },
         storeFieldData: (name, value, flag) => {
             dispatch(storeFieldData(name, value, flag));
         },
@@ -146,9 +108,6 @@ const mapDispatchToProps = (dispatch, state) => {
         },
         fetchUser: (userForm, method) => {
             dispatch(fetchUser(userForm, method));
-        },
-        push: (path) => {
-            dispatch(push(path));
         }
     };
 }
