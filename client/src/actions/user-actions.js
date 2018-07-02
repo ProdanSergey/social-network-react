@@ -1,6 +1,10 @@
 import * as types from './action-types';
 import * as methods from '../constants/fetch';
-import { addUser, getUser, authenticateUser } from '../assets/fetchData';
+import { 
+  addUser, 
+  getUser, 
+  authenticateUser, 
+  editUserInformation } from '../assets/fetchData';
 
 export const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
@@ -34,6 +38,12 @@ export const fetchUser = (data, method) => {
         .catch(error => dispatch(fetchUserFailure(error)));
       case methods.AUTH_USER:
         return authenticateUser(data).then(res => {
+          dispatch(fetchUserSuccess(res))
+          return res;
+        })
+        .catch(error => dispatch(fetchUserFailure(error)));
+      case methods.PUT_USER:
+        return editUserInformation(data).then(res => {
           dispatch(fetchUserSuccess(res))
           return res;
         })

@@ -8,6 +8,14 @@ const bcrypt = require('bcrypt');
 // Secret
 const secret = 'mSgmyIh3gX';
 
+const verifyToken = token => {
+    return jwt.verify(token, secret, function(err, decoded) {
+        if(err) return err;
+            return decoded;
+    });
+}
+
+
 export const registration = (req,res) => {
     if (Object.keys(req.body).length === 0) {
         res.status(200).send({
@@ -102,9 +110,17 @@ export const userInfo = (req, res) => {
                     firstName,
                     middleName,
                     lastName,
-                    avatar : avatar.slice(avatar.indexOf('\images'))
+                    avatar : avatar ? avatar.slice(avatar.indexOf('\images')) : null
                 });
             }
         });
     });
+}
+
+export const editUserInfo = (req, res) => {
+    console.log(req.body)
+    const token = req.headers['x-access-token'];
+    const result = verifyToken(token);
+    console.log(result)
+    res.status(200).send({vrodedoshlo: 'ok'})
 }

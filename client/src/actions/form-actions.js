@@ -8,3 +8,7 @@ export const storeFieldData = (name, value, flag) => ({
     valid: flag
   }
 });
+
+export const clearFormData = () => ({
+  type: types.CLEAR_FORM_DATA
+});

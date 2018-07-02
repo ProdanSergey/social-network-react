@@ -1,9 +1,12 @@
-import React                 from 'react';
-import { connect }           from 'react-redux';
+import React                  from 'react';
+import { connect }            from 'react-redux';
+import { validateForm }       from '../assets/validateForm';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
 import Spinner from '../views/Spinner'
+
+import AccountInput from '../views/Account_input';
 
 class Account extends React.Component {
 
@@ -14,6 +17,7 @@ class Account extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.onUpdate = this.onUpdate.bind(this);
     }
 
     componentDidMount() {
@@ -28,8 +32,16 @@ class Account extends React.Component {
         }
     }
 
-    render() {
+    onUpdate(value) {
+        console.log(value)
+        // const form = validateForm({
+        //     data: value, 
+        //     asFormData: true
+        // });
+        // this.props.fetchUser(form, methods.PUT_USER);
+    }
 
+    render() {
         return(
             <div className="col-11">
                 <div className="row account no-gutters">
@@ -39,50 +51,41 @@ class Account extends React.Component {
                             <Spinner/> :
                             <form>
                                 <label htmlFor="firstName">First Name</label>
-                                <div className="input-group mb-3">
-                                    <input 
-                                        type="text"
-                                        name="firstName"
-                                        className="form-control"
-                                        value={this.props.response.firstName}
-                                        placeholder="First Name" 
-                                        aria-label="First Name"
-                                        onChange={this.handleChange}
-                                        readOnly={!this.state.isEditMode}/>
-                                    <div className="input-group-append">
-                                        <button className="btn btn-outline-secondary" type="button" disabled>Button</button>
-                                    </div>
-                                </div>
+                                { 
+                                    this.state.isEditMode ?
+                                    <AccountInput 
+                                    passValue={{
+                                            fieldName: 'firstName',
+                                            placeholder: this.props.response.firstName,
+                                    }}
+                                    onUpdate={this.onUpdate}
+                                    /> :
+                                    <div className="data-field">{this.props.response.firstName}</div>
+                                }
                                 <label htmlFor="middleName">Middle Name</label>
-                                <div className="input-group mb-3">
-                                    <input 
-                                        type="text"
-                                        name="middleName"
-                                        className="form-control"
-                                        value={this.props.response.middleName}
-                                        placeholder="Middle Name" 
-                                        aria-label="Middle Name"
-                                        onChange={this.handleChange}
-                                        readOnly={!this.state.isEditMode}/>
-                                    <div className="input-group-append">
-                                        <button className="btn btn-outline-secondary" type="button" disabled>Button</button>
-                                    </div>
-                                </div>
+                                { 
+                                    this.state.isEditMode ?
+                                    <AccountInput
+                                    passValue={{
+                                        fieldName: 'middleName',
+                                        placeholder: this.props.response.middleName,
+                                    }}
+                                    onUpdate={this.onUpdate}
+                                    /> :
+                                    <div className="data-field">{this.props.response.middleName}</div>
+                                }
                                 <label htmlFor="lastName">Last Name</label>
-                                <div className="input-group mb-3">
-                                    <input 
-                                        type="text"
-                                        name="lastName"
-                                        className="form-control"
-                                        value={this.props.response.lastName}
-                                        placeholder="Last Name" 
-                                        aria-label="Last Name"
-                                        onChange={this.handleChange}
-                                        readOnly={!this.state.isEditMode}/>
-                                    <div className="input-group-append">
-                                        <button className="btn btn-outline-secondary" type="button" disabled>Button</button>
-                                    </div>
-                                </div>
+                                { 
+                                    this.state.isEditMode ?
+                                    <AccountInput
+                                    passValue={{
+                                        fieldName: 'lastName',
+                                        placeholder: this.props.response.lastName,
+                                    }}
+                                    onUpdate={this.onUpdate}
+                                    /> :
+                                    <div className="data-field">{this.props.response.lastName}</div>
+                                }
                                 <div className="btn-group-toggle read-only-toggler" data-toggle="buttons">
                                     <label className="btn btn-secondary active">
                                         Edit

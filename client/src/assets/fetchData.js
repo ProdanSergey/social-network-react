@@ -11,6 +11,18 @@ export const getUser = token => {
     });
 }
 
+export const editUserInformation = data => {
+    return $.ajax({
+        url: '/api/data',
+        method: 'put',
+        accept: 'application/json',
+        data: data,
+        contentType: false,
+        processData: false,
+        headers: {'x-access-token': loadState()},
+    })
+}
+
 export const addUser = user => {
     return $.ajax({
         url: '/api/reg',
