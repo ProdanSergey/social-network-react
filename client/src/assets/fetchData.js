@@ -7,7 +7,9 @@ export const getUser = token => {
         method: 'post',
         accept: 'application/json',
         contentType: 'application/json',
-        headers: {'x-access-token': loadState()}
+        headers: {
+            "Authorization" : loadState()
+        }
     });
 }
 
@@ -16,10 +18,12 @@ export const editUserInformation = data => {
         url: '/api/data',
         method: 'put',
         accept: 'application/json',
-        data: data,
         contentType: false,
         processData: false,
-        headers: {'x-access-token': loadState()},
+        data: data,
+        headers: {
+            "Authorization" : loadState()
+        }
     })
 }
 

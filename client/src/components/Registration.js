@@ -1,17 +1,13 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
-import { validateInput }      from '../assets/validateInput';
 import { validateForm }       from '../assets/validateForm';
 import { inputClass }         from '../assets/inputsClassHendler';
 import { createSelectItems }  from '../assets/createSelectItems';
-import { saveState }          from '../assets/LocalStorage';
 
-import { loadTokenToStore }   from '../actions/token-actions';
 import { 
   storeFieldData, 
   clearFormData }             from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
-import { push }               from 'connected-react-router';
 
 import * as methods           from '../constants/fetch';
 
@@ -19,61 +15,19 @@ class RegForm extends React.Component {
   
   constructor(props) {
     super(props);
-    this.state = {
-      inputs: {}
-    };
+
     this.handleChange = this.handleChange.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleUpload = this.handleUpload.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   } 
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.response !== nextProps.response) {
-      if (nextProps.response.registered) {
-        const token = nextProps.response.token;
-        saveState(token);
-        this.props.loadTokenToStore(token);
-        this.props.clearFormData();
-        this.props.push('/registration:success');
-      }
-    }
-  } 
+  componentWillUnmount() {
+    this.props.clearFormData();
+  }
 
   handleChange(event) {
-    const { value, name, type } = event.target;
-      this.setState({inputs: {...this.state.inputs, 
-        [name]: {
-          isFilled: !!value.length,
-          isValid: validateInput(type, value)
-        }
-      }
-    });
-  }
-
-  handleBlur(event) {
-    let { value, name, files, type} = event.target;
-    if(!!value.length) {
-      const { isValid } = this.state.inputs[name]
-      if(isValid) {
-        this.props.storeFieldData(name, type !== 'file' ? value : files[0], true);
-      } else {
-        this.props.storeFieldData(name, type !== 'file' ? value : files[0], false);
-      }
-    }
-  }
-
-  handleUpload(event) {
-    console.dir(event.target)
-    const { files, name, type } = event.target;
-    const image = files[0];
-      this.setState({inputs: {...this.state.inputs, 
-        [name]: {
-          isFilled: !!image,
-          isValid: image ? validateInput(type, image) : false
-        }
-      }
-    });
+    let { value, name, type, files } = event.target;
+    if (type === 'file') value = files[0] || false;
+    this.props.storeFieldData(name, type, value);
   }
 
   handleSubmit(event) {
@@ -90,6 +44,10 @@ class RegForm extends React.Component {
   }
   
   render() {
+    const {
+      form,
+      fetching
+    } = this.props
     return(
       <div className="col-11">
         <div className="row registration">
@@ -100,9 +58,8 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="firstName" 
-                  className={inputClass(this.state.inputs.firstName)}
+                  className={inputClass(form.firstName)}
                   onChange={this.handleChange}
-                  onBlur={this.handleBlur}
                   placeholder="Enter your first name" required="required"/>
                   <small id="firstNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
               </div>
@@ -111,9 +68,8 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="middleName"
-                  className={inputClass(this.state.inputs.middleName)}
+                  className={inputClass(form.middleName)}
                   onChange={this.handleChange}
-                  onBlur={this.handleBlur}
                   placeholder="Enter your middle name"/>
                   <small id="middleNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
               </div>
@@ -122,9 +78,8 @@ class RegForm extends React.Component {
                 <input 
                   type="text"
                   name="lastName"
-                  className={inputClass(this.state.inputs.lastName)}
+                  className={inputClass(form.lastName)}
                   onChange={this.handleChange}
-                  onBlur={this.handleBlur}
                   placeholder="Enter your last name" required="required"/>
                   <small id="lastNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
               </div>
@@ -134,9 +89,8 @@ class RegForm extends React.Component {
                       <label htmlFor="gender">Gender</label>
                       <select 
                         name="gender"
-                        className={inputClass(this.state.inputs.gender)}
+                        className={inputClass(form.gender)}
                         onChange={this.handleChange}
-                        onBlur={this.handleBlur}
                         defaultValue="default">
                         <option disabled value="default">Choose...</option>
                         <option value="male">Male</option>
@@ -147,9 +101,8 @@ class RegForm extends React.Component {
                       <label htmlFor="age">Age</label>
                       <select 
                         name="age"
-                        className={inputClass(this.state.inputs.age)}
+                        className={inputClass(form.age)}
                         onChange={this.handleChange}
-                        onBlur={this.handleBlur}
                         defaultValue="default">
                         <option disabled value="default">Choose...</option>
                         {createSelectItems(1,99)}
@@ -162,9 +115,8 @@ class RegForm extends React.Component {
                 <input 
                   type="email"
                   name="email"
-                  className={inputClass(this.state.inputs.email)}
+                  className={inputClass(form.email)}
                   onChange={this.handleChange}
-                  onBlur={this.handleBlur}
                   aria-describedby="emailHelp"
                   placeholder="Enter email" required="required"/>
                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -173,16 +125,16 @@ class RegForm extends React.Component {
                 <label htmlFor="image">Choose photo...</label>
                 <input
                   type="file"
-                  className={inputClass(this.state.inputs.image)}
+                  className={inputClass(form.image)}
                   name="image"
-                  onChange={this.handleUpload}
-                  onBlur={this.handleBlur}
-                  required="required"/>
+                  onChange={this.handleChange}
+                  // required="required"
+                  />
               </div>
               <div className="form-group">
                 <button 
                   type="submit"
-                  disabled={this.props.fetching}
+                  disabled={fetching}
                   className="btn btn-primary">
                     Submit
                 </button>
@@ -203,16 +155,12 @@ class RegForm extends React.Component {
 const mapStateToProps = function(store) {
   return {
     form:  store.formData.form,
-    fetching: store.userData.fetching,
-    response: store.userData.response
+    fetching: store.userData.fetching
   }
 };
 
 const mapDispatchToProps = (dispatch, state) => {
   return {
-    loadTokenToStore: (token) => {
-      dispatch(loadTokenToStore(token));
-    },
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
     },
@@ -221,9 +169,6 @@ const mapDispatchToProps = (dispatch, state) => {
     },
     fetchUser: (userForm, method) => {
       dispatch(fetchUser(userForm, method));
-    },
-    push: (path) => {
-      dispatch(push(path));
     }
   }
 };

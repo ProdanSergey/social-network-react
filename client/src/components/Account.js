@@ -1,6 +1,10 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
+
+import { 
+    storeFieldData, 
+    clearFormData }           from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
@@ -21,8 +25,12 @@ class Account extends React.Component {
     }
 
     componentDidMount() {
-        if (!this.props.response.auth)
+        if (!this.props.response.authenticated)
             this.props.fetchUser(this.props.token, methods.GET_USER);
+    }
+
+    componentWillUnmount() {
+        this.props.clearFormData();
     }
 
     handleChange(event) {
@@ -32,13 +40,27 @@ class Account extends React.Component {
         }
     }
 
-    onUpdate(value) {
-        console.log(value)
-        // const form = validateForm({
-        //     data: value, 
-        //     asFormData: true
-        // });
-        // this.props.fetchUser(form, methods.PUT_USER);
+    onUpdate(payload) {
+        const { event, value, name, type } = payload;
+        if (event === 'change') {
+            this.props.storeFieldData(name, type, value);
+        } 
+        if (event === 'submit') {
+            const form = validateForm({
+                data: {
+                    [name]: {
+                        value,
+                        valid: this.props.form[name].valid
+                    }
+                },
+                asFormData: true
+            });
+            if (form) {
+                this.props.fetchUser(form, methods.PUT_USER);
+            } else {
+                console.log('form invalid')
+            }
+        }
     }
 
     render() {
@@ -57,6 +79,7 @@ class Account extends React.Component {
                                     passValue={{
                                             fieldName: 'firstName',
                                             placeholder: this.props.response.firstName,
+                                            form: this.props.form
                                     }}
                                     onUpdate={this.onUpdate}
                                     /> :
@@ -69,6 +92,7 @@ class Account extends React.Component {
                                     passValue={{
                                         fieldName: 'middleName',
                                         placeholder: this.props.response.middleName,
+                                        form: this.props.form
                                     }}
                                     onUpdate={this.onUpdate}
                                     /> :
@@ -81,6 +105,7 @@ class Account extends React.Component {
                                     passValue={{
                                         fieldName: 'lastName',
                                         placeholder: this.props.response.lastName,
+                                        form: this.props.form
                                     }}
                                     onUpdate={this.onUpdate}
                                     /> :
@@ -129,17 +154,24 @@ class Account extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
+        form:     store.formData.form,
         fetching: store.userData.fetching,
         response: store.userData.response,
-        token: store.tokenState.token
+        token:    store.tokenState.token
     }
 };
   
   const mapDispatchToProps = (dispatch, state) => {
     return {
-        fetchUser: (token, method) => {
-            dispatch(fetchUser(token, method));
+        storeFieldData: (name, value, flag) => {
+            dispatch(storeFieldData(name, value, flag));
         },
+        clearFormData: () => {
+            dispatch(clearFormData());
+        },
+        fetchUser: (userForm, method) => {
+            dispatch(fetchUser(userForm, method));
+        }
     }
 };
   

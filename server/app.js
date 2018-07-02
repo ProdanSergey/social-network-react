@@ -5,11 +5,17 @@ import logger           from 'morgan';
 import mongoose         from 'mongoose';
 import bb               from 'express-busboy';
 import SourceMapSupport from 'source-map-support';
+import jwtMiddleware    from 'express-jwt-middleware';
+
+import { jwtsecret }    from './constants/jwtsecret';
 
 // import routes
 import appRegRoutes        from './routes/reg.route';
 import appAuthRoutes       from './routes/auth.route';
 import appDataRoutes       from './routes/data.route';
+
+// jwt middleware 
+var jwtCheck = jwtMiddleware(jwtsecret)
 
 // define app
 const app = express();
@@ -50,7 +56,7 @@ SourceMapSupport.install();
 
 app.use('/api/reg', appRegRoutes);
 app.use('/api/auth', appAuthRoutes);
-app.use('/api/data', appDataRoutes);
+app.use('/api/data', jwtCheck, appDataRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });
