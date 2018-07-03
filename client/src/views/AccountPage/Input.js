@@ -1,5 +1,5 @@
 import React                 from 'react';
-import { inputClass }        from '../assets/inputsClassHendler';
+import { inputClass }        from '../../assets/inputsClassHendler';
 
 class AccountInput extends React.Component {
 
@@ -11,9 +11,11 @@ class AccountInput extends React.Component {
     }
 
     handleChange(event) {
-        const { value, name, type } = event.target;
+        let { value, name, type, files } = event.target;
+        if (type === 'file') value = files[0] || false;
         this.props.onUpdate({event: 'change', value, name, type});
     }
+    
     handleSubmit(event) {
         event.preventDefault();
         const target = document.querySelector(`input[name="${event.target.name}"]`);
@@ -22,23 +24,30 @@ class AccountInput extends React.Component {
     }
 
     render () {
-        const { fieldName, placeholder, form } = this.props.passValue
+        const { 
+            fieldName,
+            fieldType,
+            fieldValue,
+            form
+        } = this.props
         return (
             <div className="input-group mb-3">
                 <input 
-                    type="text"
+                    type={fieldType}
                     name={fieldName}
                     className={inputClass(form[fieldName])}
-                    placeholder={placeholder}
+                    placeholder={fieldValue}
                     onChange={this.handleChange}/>
                 <div className="input-group-append">
                     <button 
-                    className="btn btn-outline-secondary" 
-                    type="button"
-                    name={fieldName}
-                    onClick={this.handleSubmit}>
-                    Send</button>
+                        className="btn btn-outline-secondary" 
+                        type="button"
+                        name={fieldName}
+                        onClick={this.handleSubmit}>
+                        Send
+                    </button>
                 </div>
+
             </div>
         )   
     }

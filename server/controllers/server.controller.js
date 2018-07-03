@@ -1,7 +1,15 @@
-import jwt              from 'jsonwebtoken';
-import User             from '../models/user.model';
-import PasswordGen      from './password';
-import { jwtsecret }    from '../constants/jwtsecret';
+import jwt                   from 'jsonwebtoken';
+import User                  from '../models/user.model';
+import PasswordGen           from '../assets/password';
+import { jwtsecret }         from '../constants/jwtsecret';
+import {
+    EMAIL_DUPLICATE,
+    USER_CREATE_SUCCESS,
+    USER_DOES_NOT_EXIST,
+    USER_LOGIN_SUCCESS,
+    AUTHENTICATION_FAILED,
+    AUTHENTICATION_SUCCESS
+} from '../constants/responseMessages';
 
 // bcrypt import
 const bcrypt = require('bcrypt');
@@ -11,17 +19,17 @@ const mongooseQuery = (model, method, ...args) => {
 }
 
 export const registration = (req,res) => {
+    const { body, body: {email}, files: {image} } = req;
     const password = PasswordGen();
-    const avatar = req.files.image ? req.files.image.file : '../client/public/images/no-avatar.jpg';
-    const user = Object.assign({}, req.body, {password, avatar})
-    const match = req.body.email;
+    const avatar = image ? image.file : '..\\client\\public\\images\\no-avatar.jpg';
+    const user = Object.assign({}, body, {password, avatar})
     const newUser = new User(user);
-    mongooseQuery(User, 'findOne', {email: match})
+    mongooseQuery(User, 'findOne', {email})
     .then(user => {
         if (user) {
             res.status(200).send({
                 authorized: false,
-                message: 'Email entry duplicate'
+                message: EMAIL_DUPLICATE
             });
         } else {
             const token = jwt.sign({ id: newUser._id }, jwtsecret, { expiresIn: 86400 });
@@ -29,7 +37,7 @@ export const registration = (req,res) => {
                 res.status(200).send({
                     authorized: true,
                     token,
-                    message: 'User is created successfuly',
+                    message: USER_CREATE_SUCCESS,
                     password
                 });
             })
@@ -47,7 +55,7 @@ export const login = (req, res) => {
         if (!user) {
             res.status(200).send({
                 authorized: false,
-                message: 'User doesnt exist',
+                message: USER_DOES_NOT_EXIST,
             });
         } else {
             const hash = user.password;
@@ -57,7 +65,7 @@ export const login = (req, res) => {
                     res.status(200).send({
                         authorized: true,
                         token,
-                        message: 'User logged in successfully'
+                        message: USER_LOGIN_SUCCESS
                     });
                 } else {
                     res.status(200).send({
@@ -67,48 +75,28 @@ export const login = (req, res) => {
             });
         }        
     })
-    // User.findOne(email, (err, user) => {
-    //     if (user) {
-    //         const hash = user.password;
-    //         bcrypt.compare(password, hash, function(err, result) {
-    //             if (result) {
-    //                 const token = jwt.sign({ id: user._id }, jwtsecret, { expiresIn: 86400 });
-    //                 res.status(200).send({
-    //                     authorized: true,
-    //                     token,
-    //                     message: 'User logged in successfully'
-    //                 });
-    //             } else {
-    //                 res.status(200).send({
-    //                     authorized: false
-    //                 });
-    //             }
-    //         });
-    //     } else {
-    //         res.status(200).send({
-    //             authorized: false,
-    //             message: 'User doesnt exist',
-    //         });
-    //     }        
-    // })
+    .catch(error => {
+        res.status(400).send(error)
+    });
 }
 
 export const userInfo = (req, res) => {
-    const { body, method, tokenData: {id} } = req;
+    const { body, method, tokenData: {id}, files: {image} } = req;
+    const queryData = image ? {avatar: image.file} : body
     const query = method === 'POST' ? 
         mongooseQuery(User, 'findById', id) : 
-        mongooseQuery(User, 'findByIdAndUpdate', id, {$set: body}, {new: true})
+        mongooseQuery(User, 'findByIdAndUpdate', id, {$set: queryData}, {new: true})
     query.then(user => {
         if(!user) {
             res.status(200).send({
                 authenticated: false, 
-                message: 'Authentication failed'
+                message: AUTHENTICATION_FAILED
             });
         } else {
             const { firstName, middleName, lastName, avatar } = user;
             res.status(200).send({
                 authenticated: true,
-                message: 'Authentication success',
+                message: AUTHENTICATION_SUCCESS,
                 firstName,
                 middleName,
                 lastName,
