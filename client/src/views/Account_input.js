@@ -18,11 +18,10 @@ class AccountInput extends React.Component {
         event.preventDefault();
         const target = document.querySelector(`input[name="${event.target.name}"]`);
         const { name, value } = target;
-        this.props.onUpdate({event: 'submit', name, value});
+        if (value) this.props.onUpdate({event: 'submit', name, value});
     }
 
     render () {
-        console.log(this.props)
         const { fieldName, placeholder, form } = this.props.passValue
         return (
             <div className="input-group mb-3">

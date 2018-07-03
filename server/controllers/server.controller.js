@@ -1,10 +1,14 @@
+import jwt              from 'jsonwebtoken';
 import User             from '../models/user.model';
 import PasswordGen      from './password';
-import jwt              from 'jsonwebtoken';
 import { jwtsecret }    from '../constants/jwtsecret';
 
 // bcrypt import
 const bcrypt = require('bcrypt');
+
+const mongooseQuery = (model, method, ...args) => {
+    return model[method](...args)
+}
 
 export const registration = (req,res) => {
     const password = PasswordGen();
@@ -12,7 +16,8 @@ export const registration = (req,res) => {
     const user = Object.assign({}, req.body, {password, avatar})
     const match = req.body.email;
     const newUser = new User(user);
-    User.findOne({email: match}, (err, user) => {
+    mongooseQuery(User, 'findOne', {email: match})
+    .then(user => {
         if (user) {
             res.status(200).send({
                 authorized: false,
@@ -29,13 +34,22 @@ export const registration = (req,res) => {
                 });
             })
         }
-    })  
+    })
+    .catch(error => {
+        res.status(400).send(error)
+    });
 }
 
 export const login = (req, res) => {
-    const password = req.body.password;
-    User.findOne({email: req.body.email}, (err, user) => {
-        if (user) {
+    const {email, password} = req.body
+    mongooseQuery(User, 'findOne', {email})
+    .then(user => {
+        if (!user) {
+            res.status(200).send({
+                authorized: false,
+                message: 'User doesnt exist',
+            });
+        } else {
             const hash = user.password;
             bcrypt.compare(password, hash, function(err, result) {
                 if (result) {
@@ -51,28 +65,44 @@ export const login = (req, res) => {
                     });
                 }
             });
-        } else {
-            res.status(200).send({
-                authorized: false,
-                message: 'User doesnt exist',
-            });
         }        
     })
+    // User.findOne(email, (err, user) => {
+    //     if (user) {
+    //         const hash = user.password;
+    //         bcrypt.compare(password, hash, function(err, result) {
+    //             if (result) {
+    //                 const token = jwt.sign({ id: user._id }, jwtsecret, { expiresIn: 86400 });
+    //                 res.status(200).send({
+    //                     authorized: true,
+    //                     token,
+    //                     message: 'User logged in successfully'
+    //                 });
+    //             } else {
+    //                 res.status(200).send({
+    //                     authorized: false
+    //                 });
+    //             }
+    //         });
+    //     } else {
+    //         res.status(200).send({
+    //             authorized: false,
+    //             message: 'User doesnt exist',
+    //         });
+    //     }        
+    // })
 }
 
 export const userInfo = (req, res) => {
-    const { id } = req.tokenData;
-    User.findById(id, function (err, user) {
-        if (err) {
-            res.status(500).send({
-                authenticated: false, 
-                message: 'Some problem'
-            });
-        }
+    const { body, method, tokenData: {id} } = req;
+    const query = method === 'POST' ? 
+        mongooseQuery(User, 'findById', id) : 
+        mongooseQuery(User, 'findByIdAndUpdate', id, {$set: body}, {new: true})
+    query.then(user => {
         if(!user) {
             res.status(200).send({
                 authenticated: false, 
-                message: 'No user found'
+                message: 'Authentication failed'
             });
         } else {
             const { firstName, middleName, lastName, avatar } = user;
@@ -85,34 +115,8 @@ export const userInfo = (req, res) => {
                 avatar : avatar ? avatar.slice(avatar.indexOf('\\images')) : null
             });
         }
-    });
-}
-
-export const editUserInfo = (req, res) => {
-    const { id } = req.tokenData;
-    const key = Object.keys(req.body)
-    User.findByIdAndUpdate(id, {$set: {[key[0]]: req.body[key]}}, function (err, user) {
-        if (err) {
-            res.status(500).send({
-                authenticated: false, 
-                message: 'Some problem'
-            });
-        }
-        if(!user) {
-            res.status(200).send({
-                authenticated: false, 
-                message: 'No user found'
-            });
-        } else {
-            const { firstName, middleName, lastName, avatar } = user;
-            res.status(200).send({
-                authenticated: true,
-                message: 'Authentication success',
-                firstName,
-                middleName,
-                lastName,
-                avatar : avatar ? avatar.slice(avatar.indexOf('\\images')) : null
-            });
-        }
+    })
+    .catch(error => {
+        res.status(400).send(error)
     });
 }
