@@ -1,6 +1,7 @@
 import React          from 'react';
 import Wall           from './Wall';
 import Welcome        from './Welcome';
+
 import { connect }    from 'react-redux';
 
 class Home extends React.Component {

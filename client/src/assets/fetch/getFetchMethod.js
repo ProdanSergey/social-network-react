@@ -2,8 +2,8 @@ import {
     addUser, 
     getUser, 
     authenticateUser, 
-    editUserInformation } from '../assets/fetchData';
-import * as methods       from '../constants/fetch';
+    editUserInformation } from './fetchData';
+import * as methods       from '../../constants/fetch';
 
 export const getFetchMethod = payload => {
     switch(payload) {
@@ -15,5 +15,7 @@ export const getFetchMethod = payload => {
         return authenticateUser;
       case methods.PUT_USER:
         return editUserInformation;
+      default:
+        return false;
     }
 }

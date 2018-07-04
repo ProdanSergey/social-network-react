@@ -1,17 +1,22 @@
 import * as types from '../actions/action-types';
 
-export default function formReducer(state = { form: {} }, action) {
+export default function formReducer(state = { form: {}, switchers: {} }, action) {
     switch(action.type) {
         case types.STORE_FIELD_DATA:
-            const {name, value, valid, filled} = action.payload
             return { 
                 ...state,
-                form: {...state.form, [name]:{value,valid,filled}}
+                form: Object.assign({}, state.form, action.payload)
+        };
+        case types.SWITCH_FIELD_MODE:
+            return { 
+                ...state,
+                switchers: action.payload
         };
         case types.CLEAR_FORM_DATA:
             return { 
                 ...state,
-                form: {}
+                form: {},
+                switchers: {}
         };
         default : 
             return state;

@@ -1,5 +1,7 @@
 import React        from 'react';
 import AccountInput from './Input';
+import EditSwitcher from './EditSwitcher';
+import {INPUT_TEXT_PLACEHOLDER } from '../../constants/global';
 
 class EditableAccountInput extends React.Component {
 
@@ -8,14 +10,14 @@ class EditableAccountInput extends React.Component {
             fieldName,
             fieldType,
             fieldValue,
-            formState,
             form,
+            switchers,
             onUpdate
         } = this.props
         return(
-            formState ?
+            switchers[fieldName] ?
                 <AccountInput fieldName={fieldName} fieldType={fieldType} fieldValue={fieldValue} form={form} onUpdate={onUpdate}/> :
-                <div className="data-field" hidden={fieldType === 'file'}>{fieldValue}</div>
+                <div className="data-field">{fieldValue || INPUT_TEXT_PLACEHOLDER}<EditSwitcher onUpdate={onUpdate} fieldName={fieldName}/></div>
         )
     }
 

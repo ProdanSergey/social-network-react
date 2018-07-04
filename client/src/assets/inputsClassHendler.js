@@ -5,7 +5,11 @@ const inputInvalid = "form-control is-invalid";
 export const inputClass = (state) => {
     if(state) {
         const { filled, valid } = state;
-        return filled ? valid ? inputValid : inputInvalid : inputUntouched;
+        if (filled) {
+            return valid ? inputValid : inputInvalid
+        } else {
+            return inputUntouched
+        }
     } else {
         return inputUntouched;
     }
