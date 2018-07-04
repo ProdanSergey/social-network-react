@@ -1,10 +1,7 @@
 import * as types from './action-types';
-import * as methods from '../constants/fetch';
-import { 
-  addUser, 
-  getUser, 
-  authenticateUser, 
-  editUserInformation } from '../assets/fetchData';
+import { getFetchMethod } from '../assets/getFetchMethod';
+import { getFetchResponse } from '../assets/getFetchResponse';
+import { push }               from 'connected-react-router';
 
 export const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
@@ -20,36 +17,20 @@ export const fetchUserFailure = error => ({
   payload: { error }
 });
 
-export const fetchUser = (data, method) => {
+export const fetchUser = (data, payload) => {
   return dispatch => {
     dispatch(fetchUserBegin());
-    switch(method) {
-      case methods.ADD_USER:
-        return addUser(data).then(res => {
-          dispatch(fetchUserSuccess(res))
-          return res;
-        })
-        .catch(error => dispatch(fetchUserFailure(error)));
-      case methods.GET_USER:
-        return getUser(data).then(res => {
-          dispatch(fetchUserSuccess(res))
-          return res;
-        })
-        .catch(error => dispatch(fetchUserFailure(error)));
-      case methods.AUTH_USER:
-        return authenticateUser(data).then(res => {
-          dispatch(fetchUserSuccess(res))
-          return res;
-        })
-        .catch(error => dispatch(fetchUserFailure(error)));
-      case methods.PUT_USER:
-        return editUserInformation(data).then(res => {
-          dispatch(fetchUserSuccess(res))
-          return res;
-        })
-        .catch(error => dispatch(fetchUserFailure(error)));
-      default:
-        return false;
-    }
+    return getFetchMethod(payload)(data)
+    .then(res => {
+      dispatch(fetchUserSuccess(res));
+      return res;
+    })
+    .then(res => getFetchResponse(dispatch, res))
+    .then(res => {
+      const { redirect, path } = res
+      if(redirect) dispatch(push(path))
+    })
+    .catch(error => dispatch(fetchUserFailure(error)));
   };
 }
+

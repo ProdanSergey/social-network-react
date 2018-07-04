@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.route('/')
         .post(appController.userInfo)
-        .put(appController.editUserInfo)
+        .put(appController.userInfo)
 
 export default router;

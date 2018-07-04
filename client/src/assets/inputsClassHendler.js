@@ -1,12 +1,12 @@
-const untouched = "form-control";
-const valid = "form-control is-valid";
-const invalid = "form-control is-invalid";
+const inputUntouched = "form-control";
+const inputValid = "form-control is-valid";
+const inputInvalid = "form-control is-invalid";
 
 export const inputClass = (state) => {
     if(state) {
-        const { isFilled, isValid } = state;
-        return isFilled ? isValid ? valid : invalid : untouched;
+        const { filled, valid } = state;
+        return filled ? valid ? inputValid : inputInvalid : inputUntouched;
     } else {
-        return untouched;
+        return inputUntouched;
     }
 }
