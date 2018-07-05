@@ -1,7 +1,6 @@
-import * as types from './action-types';
-import { getFetchMethod } from '../assets/getFetchMethod';
-import { getFetchResponse } from '../assets/getFetchResponse';
-import { push }               from 'connected-react-router';
+import * as types             from './action-types';
+import { getFetchMethod }     from '../assets/fetch/getFetchMethod';
+import { getFetchResponse }   from '../assets/fetch/getFetchResponse';
 
 export const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
@@ -18,18 +17,14 @@ export const fetchUserFailure = error => ({
 });
 
 export const fetchUser = (data, payload) => {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(fetchUserBegin());
     return getFetchMethod(payload)(data)
     .then(res => {
       dispatch(fetchUserSuccess(res));
       return res;
     })
-    .then(res => getFetchResponse(dispatch, res))
-    .then(res => {
-      const { redirect, path } = res
-      if(redirect) dispatch(push(path))
-    })
+    .then(res => getFetchResponse(dispatch, getState, res))
     .catch(error => dispatch(fetchUserFailure(error)));
   };
 }

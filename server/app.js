@@ -5,28 +5,25 @@ import logger           from 'morgan';
 import mongoose         from 'mongoose';
 import bb               from 'express-busboy';
 import SourceMapSupport from 'source-map-support';
-import jwtMiddleware    from 'express-jwt-middleware';
 
-import { jwtsecret }    from './constants/jwtsecret';
+import jwtMiddleware       from 'express-jwt-middleware';
+import Validation          from './middleware/validation';
 
-// import routes
+import { jwtsecret }       from './constants/jwtsecret';
+
 import appRegRoutes        from './routes/reg.route';
 import appAuthRoutes       from './routes/auth.route';
 import appDataRoutes       from './routes/data.route';
 
-// jwt middleware 
 var jwtCheck = jwtMiddleware(jwtsecret)
 
-// define app
 const app = express();
 
-// express-busboy to parse multipart/form-data
 bb.extend(app, {
   upload: true,
   path: '.././client/public/images'
 });
 
-// allow-cors
 app.use(function(req,res,next){
   res.header('Content-Type', 'application/json');
   res.header("Access-Control-Allow-Origin", "*");
@@ -34,39 +31,29 @@ app.use(function(req,res,next){
   next();
 });
 
-// set the port
 const port = process.env.PORT || 3001;
 
-// configure app
 app.use(logger('dev'));
 
-// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false}));
-// parse application/json
 app.use(bodyParser.json({ type: 'application/*+json' }));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
-// connect to database
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/reactApp');
 
-// add Source Map Support
 SourceMapSupport.install();
-
-app.use('/api/reg', appRegRoutes);
-app.use('/api/auth', appAuthRoutes);
-app.use('/api/data', jwtCheck, appDataRoutes);
+app.use('/api/reg', Validation, appRegRoutes);
+app.use('/api/auth', Validation, appAuthRoutes);
+app.use('/api/data', jwtCheck, Validation, appDataRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });
 
-// catch 404
 app.use((req, res, next) => {
   res.status(404).send('<h2 align=center>Page Not Found!</h2>');
 });
 
-// start the server
 app.listen(port,() => {
   console.log(`App Server Listening at ${port}`);
 });

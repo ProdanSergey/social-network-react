@@ -10,21 +10,19 @@ import {
     AUTHENTICATION_FAILED,
     AUTHENTICATION_SUCCESS
 } from '../constants/responseMessages';
+import { DEFAULT_AVATAR }    from '../constants/defaultAvatar';
 
 // bcrypt import
 const bcrypt = require('bcrypt');
 
-const mongooseQuery = (model, method, ...args) => {
-    return model[method](...args)
-}
-
 export const registration = (req,res) => {
-    const { body, body: {email}, files: {image} } = req;
+    const { filesIsEmpty} = res.errors
+    const { body, body: {email}, files } = req;
     const password = PasswordGen();
-    const avatar = image ? image.file : '..\\client\\public\\images\\no-avatar.jpg';
+    const avatar = filesIsEmpty ? DEFAULT_AVATAR : files.image.file
     const user = Object.assign({}, body, {password, avatar})
     const newUser = new User(user);
-    mongooseQuery(User, 'findOne', {email})
+    User.findOne({email})
     .then(user => {
         if (user) {
             res.status(200).send({
@@ -43,14 +41,12 @@ export const registration = (req,res) => {
             })
         }
     })
-    .catch(error => {
-        res.status(400).send(error)
-    });
+    .catch(error => res.status(400).send(error));
 }
 
 export const login = (req, res) => {
     const {email, password} = req.body
-    mongooseQuery(User, 'findOne', {email})
+    User.findOne({email})
     .then(user => {
         if (!user) {
             res.status(200).send({
@@ -75,17 +71,16 @@ export const login = (req, res) => {
             });
         }        
     })
-    .catch(error => {
-        res.status(400).send(error)
-    });
+    .catch(error => res.status(400).send(error));
 }
 
 export const userInfo = (req, res) => {
-    const { body, method, tokenData: {id}, files: {image} } = req;
-    const queryData = image ? {avatar: image.file} : body
+    const { filesIsEmpty} = res.errors;
+    const { body, files, method, tokenData: {id} } = req;
+    const queryData = filesIsEmpty ? body : {avatar: files.image.file};
     const query = method === 'POST' ? 
-        mongooseQuery(User, 'findById', id) : 
-        mongooseQuery(User, 'findByIdAndUpdate', id, {$set: queryData}, {new: true})
+        User.findById(id) : 
+        User.findByIdAndUpdate(id, {$set: queryData}, {new: true})
     query.then(user => {
         if(!user) {
             res.status(200).send({
@@ -104,7 +99,5 @@ export const userInfo = (req, res) => {
             });
         }
     })
-    .catch(error => {
-        res.status(400).send(error)
-    });
+    .catch(error => res.status(400).send(error));
 }

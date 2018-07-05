@@ -1,0 +1,1 @@
+export const INPUT_TEXT_PLACEHOLDER = 'Edit your info'

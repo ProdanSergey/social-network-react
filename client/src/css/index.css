@@ -1,4 +1,5 @@
 @import url("./root.css");
+@import url("./icons.css");
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700|Oxygen:400,700&subset=cyrillic");
 #root {
   height: 100vh;
@@ -64,6 +65,7 @@ h1, h2, h3 {
 }
 
 .main {
+  position: relative;
   min-height: 100%;
   height: 1px;
   background-color: var(--main);
@@ -91,34 +93,7 @@ h1, h2, h3 {
   margin: 1rem 0;
 }
 
-.main .sidebar__menu .icon {
-  display: block;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-}
-
-.main .sidebar__menu .account {
-  background-image: url("/icons/account.svg");
-}
-
-.main .sidebar__menu .friends {
-  background-image: url("/icons/friends.svg");
-}
-
-.main .sidebar__menu .news {
-  background-image: url("/icons/news.svg");
-}
-
-.main .sidebar__menu .search {
-  background-image: url("/icons/search.svg");
-}
-
-.main .sidebar__menu .settings {
-  background-image: url("/icons/settings.svg");
-}
-
-.main .wall, .main .registration, .main .login, .main .account {
+.main .wall, .main .registration, .main .login, .main .accountpage {
   padding: 1.5rem;
 }
 
@@ -190,46 +165,48 @@ h1, h2, h3 {
   object-position: center;
 }
 
-.main .account .col:first-child {
+.main .accountpage .col:first-child {
   margin-right: 1.5rem;
 }
 
-.main .account__info {
+.main .accountpage__info {
   padding: 1.5rem;
   background-color: var(--color-light);
 }
 
-.main .account__info form {
-  position: relative;
-  padding-top: calc(24px + 7px * 2);
-}
-
-.main .account__info form .data-field {
-  padding: .375rem .75rem;
-  margin-bottom: 1rem;
-  border: 1px solid;
-  border-radius: 5px;
-}
-
-.main .account__info form .read-only-toggler {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.main .account__avatar {
+.main .accountpage__avatar {
   padding: 1.5rem;
   background-color: var(--color-light);
 }
 
-.main .account__avatar .image {
+.main .accountpage__avatar .image {
   width: 100%;
   height: 300px;
 }
 
-.main .account__avatar .image img {
+.main .accountpage__avatar .image img {
   display: block;
   max-width: 100%;
+}
+
+.main .accountpage form .data-field {
+  position: relative;
+  line-height: 24px;
+  padding: .375rem .75rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  background-color: var(--main);
+}
+
+.main .accountpage form .data-field .icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  right: 5px;
 }
 
 .main .spinner {
@@ -239,4 +216,13 @@ h1, h2, h3 {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+}
+
+.main .message {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 2rem;
+  color: var(--color-light);
+  background-color: var(--color-3);
 }

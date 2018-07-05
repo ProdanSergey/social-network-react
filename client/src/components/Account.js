@@ -3,42 +3,33 @@ import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
 
 import { 
-    storeFieldData, 
-    clearFormData }           from '../actions/form-actions';
+    storeFieldData,
+    switchFieldMode }           from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
 import Spinner                from '../views/Spinner';
 
 import EditableAccountInput   from '../views/AccountPage/EditableAccountInput';
-import EditSwitcher           from '../views/AccountPage/EditSwitcher';
 
 class Account extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = {
-            isEditMode: false
-        };
 
-        this.onSwitch = this.onSwitch.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
     }
 
     componentDidMount() {
         if (!this.props.response.authenticated)
-            this.props.fetchUser(this.props.token, methods.GET_USER);
-            
-    }
-
-    componentWillUnmount() {
-        this.props.clearFormData();
+            this.props.fetchUser(null, methods.GET_USER);
     }
 
     onUpdate(payload) {
         const { event, value, name, type } = payload;
+        const { storeFieldData, switchFieldMode} = this.props;
         if (event === 'change') {
-            this.props.storeFieldData(name, type, value);
+            storeFieldData(name, type, value);
         } 
         if (event === 'submit') {
             const form = validateForm({
@@ -47,15 +38,14 @@ class Account extends React.Component {
             });
             if (form) {
                 this.props.fetchUser(form, methods.PUT_USER);
+                switchFieldMode(name, false);
             } else {
                 console.log('form invalid')
             }
         }
-    }
-
-    onSwitch(payload) {
-        const { checked } = payload.target;
-        this.setState({isEditMode: checked})
+        if (event === 'switch') {
+            switchFieldMode(name, true)
+        }
     }
 
     render() {
@@ -67,15 +57,13 @@ class Account extends React.Component {
                 lastName,
                 avatar
             },
-            form
+            form,
+            switchers
         } = this.props
-        const {
-            isEditMode
-        } = this.state
         return(
             <div className="col-11">
-                <div className="row account no-gutters">
-                    <section className="account__info col">
+                <div className="row accountpage no-gutters">
+                    <section className="accountpage__info col">
                         <Spinner hidden={!fetching}/>
                         <form hidden={fetching}>
                             <label htmlFor="firstName">First Name</label>
@@ -84,8 +72,9 @@ class Account extends React.Component {
                                 fieldType={'text'}
                                 fieldValue={firstName}
                                 form={form}
-                                formState={isEditMode}
+                                switchers={switchers}
                                 onUpdate={this.onUpdate}
+                                onSwitch={this.onSwitch}
                             />
                             <label htmlFor="middleName">Middle Name</label>
                             <EditableAccountInput
@@ -93,8 +82,9 @@ class Account extends React.Component {
                                 fieldType={'text'}
                                 fieldValue={middleName}
                                 form={form}
-                                formState={isEditMode}
+                                switchers={switchers}
                                 onUpdate={this.onUpdate}
+                                onSwitch={this.onSwitch}
                             />
                             <label htmlFor="lastName">Last Name</label>
                             <EditableAccountInput
@@ -102,13 +92,13 @@ class Account extends React.Component {
                                 fieldType={'text'}
                                 fieldValue={lastName}
                                 form={form}
-                                formState={isEditMode}
+                                switchers={switchers}
                                 onUpdate={this.onUpdate}
+                                onSwitch={this.onSwitch}
                             />
-                            <EditSwitcher onSwitch={this.onSwitch}/>
                         </form>
                     </section>
-                    <section className="account__avatar col">
+                    <section className="accountpage__avatar col">
                         <Spinner hidden={!fetching}/>
                         <form hidden={fetching}>
                             <label htmlFor="image">Avatar</label>
@@ -119,7 +109,7 @@ class Account extends React.Component {
                                 fieldName={'image'}
                                 fieldType={'file'}
                                 form={form}
-                                formState={isEditMode}
+                                switchers={switchers}
                                 onUpdate={this.onUpdate}
                             />
                         </form>
@@ -132,10 +122,10 @@ class Account extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        form:     store.formData.form,
-        fetching: store.userData.fetching,
-        response: store.userData.response,
-        token:    store.tokenState.token
+        form:      store.formData.form,
+        switchers: store.formData.switchers,
+        fetching:  store.userData.fetching,
+        response:  store.userData.response,
     }
 };
   
@@ -144,8 +134,8 @@ const mapStateToProps = function(store) {
         storeFieldData: (name, value, flag) => {
             dispatch(storeFieldData(name, value, flag));
         },
-        clearFormData: () => {
-            dispatch(clearFormData());
+        switchFieldMode: (name, value) => {
+            dispatch(switchFieldMode(name, value));
         },
         fetchUser: (userForm, method) => {
             dispatch(fetchUser(userForm, method));

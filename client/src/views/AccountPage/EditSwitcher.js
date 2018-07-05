@@ -9,20 +9,17 @@ class EditSwitcher extends React.Component {
     }
 
     handleChange(event) {
-        this.props.onSwitch(event);
+        const { name } = event.target.dataset
+        this.props.onUpdate({event: 'switch', name});
     }
 
     render() {
         return(
-            <div className="btn-group-toggle read-only-toggler" data-toggle="buttons">
-                <label className="btn btn-secondary active">
-                    Edit
-                    <input 
-                    id="edit" 
-                    onChange={this.handleChange}
-                    type="checkbox"/>
-                </label>
-            </div>
+            <i 
+                className="icon edit"
+                onClick={this.handleChange}
+                data-name={this.props.fieldName}>
+            </i>
         )
     }
 }

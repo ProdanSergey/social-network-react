@@ -1,5 +1,8 @@
 // Form
 export const STORE_FIELD_DATA   = 'STORE_FIELD_DATA';
+export const SWITCH_FIELD_MODE  = 'SWITCH_FIELD_MODE';
+export const FORM_VALID         = 'FORM_VALID';
+export const FORM_INVALID       = 'FORM_INVALID';
 export const CLEAR_FORM_DATA    = 'CLEAR_FORM_DATA';
 
 // User

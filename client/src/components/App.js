@@ -2,6 +2,7 @@ import React        from 'react';
 import Navigation   from './Navigation';
 import Main         from './Main';
 import Sidebar      from './Sidebar';
+import MessageBox   from './MessageBox';
 
 class App extends React.Component {
   render(){
@@ -9,7 +10,7 @@ class App extends React.Component {
     <div className="container">
       <Navigation />
       <main className="row main no-gutters">
-        <Sidebar /><Main />
+        <Sidebar /><Main /><MessageBox />
       </main>
     </div>
     )

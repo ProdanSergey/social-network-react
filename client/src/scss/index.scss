@@ -1,5 +1,8 @@
 @import url('./root.css');
+@import url('./icons.css');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700|Oxygen:400,700&subset=cyrillic');
+
+
 
 #root {
     height: 100vh;
@@ -53,6 +56,7 @@ h1, h2, h3 {
 }
 
 .main {
+    position: relative;
     min-height: 100%;
     height: 1px;
     background-color: var(--main);
@@ -68,30 +72,9 @@ h1, h2, h3 {
                     margin: 1rem 0;
                 }
             }
-            .icon {
-                display: block;
-                width: 50px;
-                height: 50px;
-                cursor: pointer;
-            }
-            .account {
-                background-image: url('/icons/account.svg')
-            }
-            .friends {
-                background-image: url('/icons/friends.svg')
-            }
-            .news {
-                background-image: url('/icons/news.svg')
-            }
-            .search {
-                background-image: url('/icons/search.svg')
-            }
-            .settings {
-                background-image: url('/icons/settings.svg')
-            }
         }
     }
-    .wall, .registration, .login, .account {
+    .wall, .registration, .login, .accountpage {
         padding: 1.5rem;
     }
     .wall {
@@ -143,28 +126,13 @@ h1, h2, h3 {
             }
         }
     }
-    .account {
+    .accountpage {
         .col:first-child {
             margin-right: 1.5rem;
         }
         &__info {
             padding: 1.5rem;
             background-color: var(--color-light);
-            form {
-                position: relative;
-                padding-top: calc(24px + 7px * 2); 
-                .data-field {
-                    padding: .375rem .75rem;
-                    margin-bottom:1rem;
-                    border: 1px solid;
-                    border-radius: 5px;
-                }
-                .read-only-toggler {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                }
-            }
         }
         &__avatar {
             padding: 1.5rem;
@@ -178,10 +146,36 @@ h1, h2, h3 {
                 }
             }
         }
+        form {
+            .data-field {
+                position: relative;
+                line-height: 24px;
+                padding: .375rem .75rem;
+                margin-bottom:1rem;
+                border: 1px solid transparent;
+                background-color: var(--main);
+                .icon {
+                    width: 20px;
+                    height: 20px;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    right: 5px;
+                }
+            }
+        }
     }
     .spinner {
         display: flex;
         justify-content: center;
+    }
+    .message {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        padding: 2rem;
+        color: var(--color-light);
+        background-color: var(--color-3);
     }
 }
 
