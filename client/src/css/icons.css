@@ -28,3 +28,8 @@
 .edit {
   background-image: url("/icons/edit.svg");
 }
+
+.close-toggler {
+  background-image: url("/icons/close.svg");
+  background-size: cover;
+}

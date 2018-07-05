@@ -1,14 +1,14 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
-import { inputClass }         from '../assets/inputsClassHendler';
 
-import { 
-    storeFieldData, 
-    clearFormData }           from '../actions/form-actions';
+import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
+import * as constants         from '../constants/global';
+
+import Input from '../views/Input';
 
 
 class Login extends React.Component {
@@ -16,16 +16,12 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
     
-        this.handleChange = this.handleChange.bind(this);
+        this.onUpdate = this.onUpdate.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillUnmount() {
-        this.props.clearFormData();
-    }
-
-    handleChange(event) {
-        let { value, name, type } = event.target;
+    onUpdate(event) {
+        let { value, name, type } = event;
         this.props.storeFieldData(name, type, value);
     }
     
@@ -54,22 +50,27 @@ class Login extends React.Component {
                         <form onSubmit={this.handleSubmit}>
                             <div className="form-group">
                                 <label htmlFor="email">Email address</label>
-                                <input 
-                                    type="email"
-                                    name="email"
-                                    className={inputClass(form.email)}
-                                    onChange={this.handleChange}
-                                    aria-describedby="emailHelp" placeholder="Enter email"/>
-                                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                                <Input 
+                                    fieldName={'email'}
+                                    fieldType={'email'}
+                                    fieldValue={'Search...'}
+                                    fieldHelp={'emailHelp'}
+                                    helpText={constants.INPUT_ALERT_INVALID}
+                                    form={form}
+                                    onUpdate={this.onUpdate}
+                                />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="password">Password</label>
-                                <input 
-                                    type="password"
-                                    name="password"
-                                    className={inputClass(form.password)}
-                                    onChange={this.handleChange}
-                                    placeholder="Password"/>
+                                <Input 
+                                    fieldName={'password'}
+                                    fieldType={'password'}
+                                    fieldValue={'Search...'}
+                                    fieldHelp={'emailHelp'}
+                                    helpText={constants.INPUT_ALERT_INVALID}
+                                    form={form}
+                                    onUpdate={this.onUpdate}
+                                />
                             </div>
                             <div className="form-group">
                                 <button 
@@ -100,11 +101,8 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = (dispatch, state) => {
     return {
-        storeFieldData: (name, value, flag) => {
-            dispatch(storeFieldData(name, value, flag));
-        },
-        clearFormData: () => {
-            dispatch(clearFormData());
+        storeFieldData: (name, type, value) => {
+            dispatch(storeFieldData(name, type, value));
         },
         fetchUser: (userForm, method) => {
             dispatch(fetchUser(userForm, method));

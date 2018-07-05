@@ -1,31 +1,28 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
-import { inputClass }         from '../assets/inputsClassHendler';
 import { createSelectItems }  from '../assets/createSelectItems';
 
-import { 
-  storeFieldData, 
-  clearFormData }             from '../actions/form-actions';
+import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
+import * as constants         from '../constants/global';
+
+import Input from '../views/Input';
 
 class RegForm extends React.Component {
   
   constructor(props) {
     super(props);
 
-    this.handleChange = this.handleChange.bind(this);
+    this.onUpdate = this.onUpdate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   } 
 
-  componentWillUnmount() {
-    this.props.clearFormData();
-  }
 
-  handleChange(event) {
-    let { value, name, type, files } = event.target;
+  onUpdate(event) {
+    let { value, name, type, files } = event;
     if (type === 'file') value = files[0] || false;
     this.props.storeFieldData(name, type, value);
   }
@@ -55,81 +52,96 @@ class RegForm extends React.Component {
             <form onSubmit={this.handleSubmit}>
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
-                <input 
-                  type="text"
-                  name="firstName" 
-                  className={inputClass(form.firstName)}
-                  onChange={this.handleChange}
-                  placeholder="Enter your first name" required="required"/>
-                  <small id="firstNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
+                <Input 
+                  fieldName={'firstName'}
+                  fieldType={'text'}
+                  fieldValue={'Enter your first name'}
+                  fieldHelp={'firstNameHelp'}
+                  required={true}
+                  helpText={constants.INPUT_ALERT_INVALID}
+                  form={form}
+                  onUpdate={this.onUpdate}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="middleName">Middle Name</label>
-                <input 
-                  type="text"
-                  name="middleName"
-                  className={inputClass(form.middleName)}
-                  onChange={this.handleChange}
-                  placeholder="Enter your middle name"/>
-                  <small id="middleNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
+                <Input 
+                  fieldName={'middleName'}
+                  fieldType={'text'}
+                  fieldValue={'Enter your middle name'}
+                  fieldHelp={'middleNameHelp'}
+                  required={false}
+                  helpText={constants.INPUT_ALERT_INVALID}
+                  form={form}
+                  onUpdate={this.onUpdate}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
-                <input 
-                  type="text"
-                  name="lastName"
-                  className={inputClass(form.lastName)}
-                  onChange={this.handleChange}
-                  placeholder="Enter your last name" required="required"/>
-                  <small id="lastNameHelp" className="form-text text-muted">Only latin characters and number allowed.</small>
+                <Input 
+                  fieldName={'lastName'}
+                  fieldType={'text'}
+                  fieldValue={'Enter your last name'}
+                  fieldHelp={'lastNameHelp'}
+                  required={true}
+                  helpText={constants.INPUT_ALERT_INVALID}
+                  form={form}
+                  onUpdate={this.onUpdate}
+                />
               </div>
               <div className="form-group">
-                <div className="row">
+                <div className="row p-0">
                     <div className="col-6">
                       <label htmlFor="gender">Gender</label>
-                      <select 
-                        name="gender"
-                        className={inputClass(form.gender)}
-                        onChange={this.handleChange}
-                        defaultValue="default">
-                        <option disabled value="default">Choose...</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
+                      <Input 
+                        fieldName={'gender'}
+                        fieldType={'select'}
+                        fieldValue={'Choose...'}
+                        defaultValue="default"
+                        form={form}
+                        options={['Male', 'Female']}
+                        onUpdate={this.onUpdate}
+                      />
                     </div>
                     <div className="col-6">
                       <label htmlFor="age">Age</label>
-                      <select 
-                        name="age"
-                        className={inputClass(form.age)}
-                        onChange={this.handleChange}
-                        defaultValue="default">
-                        <option disabled value="default">Choose...</option>
-                        {createSelectItems(1,99)}
-                      </select>
+                      <Input 
+                        fieldName={'age'}
+                        fieldType={'select'}
+                        fieldValue={'Choose...'}
+                        defaultValue="default"
+                        form={form}
+                        options={createSelectItems(1,99)}
+                        onUpdate={this.onUpdate}
+                      />
                     </div>
                 </div>
               </div>
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
-                <input 
-                  type="email"
-                  name="email"
-                  className={inputClass(form.email)}
-                  onChange={this.handleChange}
-                  aria-describedby="emailHelp"
-                  placeholder="Enter email" required="required"/>
-                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                <Input 
+                  fieldName={'email'}
+                  fieldType={'email'}
+                  fieldValue={'Enter your email'}
+                  fieldHelp={'emailHelp'}
+                  required={true}
+                  helpText={constants.INPUT_ALERT_INVALID}
+                  form={form}
+                  onUpdate={this.onUpdate}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="image">Choose photo...</label>
-                <input
-                  type="file"
-                  className={inputClass(form.image)}
-                  name="image"
-                  onChange={this.handleChange}
-                  // required="required"
-                  />
+                <Input 
+                  fieldName={'image'}
+                  fieldType={'file'}
+                  fieldValue={'Choose your photo'}
+                  fieldHelp={'imageHelp'}
+                  required={true}
+                  helpText={constants.INPUT_ALERT_INVALID}
+                  form={form}
+                  onUpdate={this.onUpdate}
+                />
               </div>
               <div className="form-group">
                 <button 
@@ -163,9 +175,6 @@ const mapDispatchToProps = (dispatch, state) => {
   return {
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
-    },
-    clearFormData: () => {
-      dispatch(clearFormData());
     },
     fetchUser: (userForm, method) => {
       dispatch(fetchUser(userForm, method));

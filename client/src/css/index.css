@@ -64,18 +64,11 @@ h1, h2, h3 {
   color: var(--color-1);
 }
 
-.main {
-  position: relative;
-  min-height: 100%;
-  height: 1px;
-  background-color: var(--main);
-}
-
-.main .sidebar {
+.sidebar {
   background-color: var(--ui);
 }
 
-.main .sidebar__menu ul {
+.sidebar__menu ul {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -89,25 +82,37 @@ h1, h2, h3 {
   list-style-type: none;
 }
 
-.main .sidebar__menu ul li {
+.sidebar__menu ul li {
   margin: 1rem 0;
 }
 
-.main .wall, .main .registration, .main .login, .main .accountpage {
+.main {
+  position: relative;
+  min-height: 100%;
+  height: 1px;
+  background-color: var(--main);
+}
+
+.main .row {
   padding: 1.5rem;
 }
 
-.main .wall__header {
-  height: 400px;
-  position: relative;
+.main .row .col {
+  padding: 1.5rem;
+  background-color: var(--color-light);
 }
 
-.main .wall__header .image {
+.main .wallpage__header {
+  position: relative;
+  height: 400px;
+}
+
+.main .wallpage__header .image {
   width: 100%;
   height: 100%;
 }
 
-.main .wall__header .image img {
+.main .wallpage__header .image img {
   display: block;
   height: inherit;
   width: inherit;
@@ -117,7 +122,7 @@ h1, h2, h3 {
   object-position: center;
 }
 
-.main .wall__header .menu {
+.main .wallpage__header .menu {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -132,7 +137,7 @@ h1, h2, h3 {
   background-color: var(--ui);
 }
 
-.main .wall__header .menu .user {
+.main .wallpage__header .menu .user {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -141,7 +146,7 @@ h1, h2, h3 {
   align-items: flex-end;
 }
 
-.main .wall__header .menu .user__pic {
+.main .wallpage__header .menu .user__pic {
   position: absolute;
   top: -50px;
   left: 50%;
@@ -155,7 +160,7 @@ h1, h2, h3 {
   overflow: hidden;
 }
 
-.main .wall__header .menu .user__pic img {
+.main .wallpage__header .menu .user__pic img {
   display: block;
   height: inherit;
   width: inherit;
@@ -163,20 +168,6 @@ h1, h2, h3 {
   object-fit: cover;
   -o-object-position: center;
   object-position: center;
-}
-
-.main .accountpage .col:first-child {
-  margin-right: 1.5rem;
-}
-
-.main .accountpage__info {
-  padding: 1.5rem;
-  background-color: var(--color-light);
-}
-
-.main .accountpage__avatar {
-  padding: 1.5rem;
-  background-color: var(--color-light);
 }
 
 .main .accountpage__avatar .image {
@@ -225,4 +216,19 @@ h1, h2, h3 {
   padding: 2rem;
   color: var(--color-light);
   background-color: var(--color-3);
+}
+
+.main .message__handler {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 25px;
+  height: 25px;
+  background: none;
+  border: none;
+}
+
+.main .message .icon {
+  width: 25px;
+  height: 25px;
 }

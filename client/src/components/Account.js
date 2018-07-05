@@ -63,7 +63,7 @@ class Account extends React.Component {
         return(
             <div className="col-11">
                 <div className="row accountpage no-gutters">
-                    <section className="accountpage__info col">
+                    <section className="col mr-4 accountpage__info">
                         <Spinner hidden={!fetching}/>
                         <form hidden={fetching}>
                             <label htmlFor="firstName">First Name</label>
@@ -74,7 +74,6 @@ class Account extends React.Component {
                                 form={form}
                                 switchers={switchers}
                                 onUpdate={this.onUpdate}
-                                onSwitch={this.onSwitch}
                             />
                             <label htmlFor="middleName">Middle Name</label>
                             <EditableAccountInput
@@ -84,7 +83,6 @@ class Account extends React.Component {
                                 form={form}
                                 switchers={switchers}
                                 onUpdate={this.onUpdate}
-                                onSwitch={this.onSwitch}
                             />
                             <label htmlFor="lastName">Last Name</label>
                             <EditableAccountInput
@@ -94,11 +92,10 @@ class Account extends React.Component {
                                 form={form}
                                 switchers={switchers}
                                 onUpdate={this.onUpdate}
-                                onSwitch={this.onSwitch}
                             />
                         </form>
                     </section>
-                    <section className="accountpage__avatar col">
+                    <section className="col accountpage__avatar">
                         <Spinner hidden={!fetching}/>
                         <form hidden={fetching}>
                             <label htmlFor="image">Avatar</label>
@@ -131,8 +128,8 @@ const mapStateToProps = function(store) {
   
   const mapDispatchToProps = (dispatch, state) => {
     return {
-        storeFieldData: (name, value, flag) => {
-            dispatch(storeFieldData(name, value, flag));
+        storeFieldData: (name, type, value) => {
+            dispatch(storeFieldData(name, type, value));
         },
         switchFieldMode: (name, value) => {
             dispatch(switchFieldMode(name, value));

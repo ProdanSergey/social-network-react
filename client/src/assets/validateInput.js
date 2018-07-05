@@ -2,7 +2,8 @@ import * as regex from '../constants/regex';
 
 export const validateInput = (field_type, field_value) => {
     switch(field_type) {
-        case 'text': {
+        case 'text':
+        case 'search': {
             return regex[field_type].test(field_value) && field_value.length < 32;
         }
         case 'email':

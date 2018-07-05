@@ -16,19 +16,21 @@ class Wall extends React.Component {
         const { response, fetching } = this.props
         if (fetching) return <Spinner/>
         return(
-            <div className="wall__header">
-                <div className="image"><img src="/mount.jpeg" alt=""/></div>
-                <div className="menu">
-                <div className="user">
-                    <div className="user__pic">
-                    <img src={response.avatar}
-                    alt="user avatar"/>
+            <div className="row wallpage no-gutters">
+                <section className=" col wallpage__header p-0">
+                    <div className="image"><img src="/mount.jpeg" alt=""/></div>
+                    <div className="menu">
+                    <div className="user">
+                        <div className="user__pic">
+                        <img src={response.avatar}
+                        alt="user avatar"/>
+                        </div>
+                        <div className="user__name">
+                        <h2>{response.firstName +' '+ response.lastName}</h2>
+                        </div>
                     </div>
-                    <div className="user__name">
-                    <h2>{response.firstName +' '+ response.lastName}</h2>
-                    </div>
-                </div>
-                </div> 
+                    </div> 
+                </section>
             </div>
         )
     }

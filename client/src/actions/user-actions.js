@@ -11,9 +11,17 @@ export const fetchUserSuccess = response => ({
   payload: { response }
 });
 
-export const fetchUserFailure = error => ({
+export const fetchUserFailure = response => ({
   type: types.FETCH_USER_FAILURE,
-  payload: { error }
+  payload: { response }
+});
+
+export const fetchShowMessage = () => ({
+  type: types.FETCH_SHOW_MESSAGE
+});
+
+export const fetchHideMessage = () => ({
+  type: types.FETCH_HIDE_MESSAGE
 });
 
 export const fetchUser = (data, payload) => {
