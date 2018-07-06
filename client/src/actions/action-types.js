@@ -9,6 +9,8 @@ export const CLEAR_FORM_DATA    = 'CLEAR_FORM_DATA';
 export const FETCH_USER_BEGIN   = 'FETCH_USER_BEGIN';
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
+export const FETCH_SHOW_MESSAGE = 'FETCH_SHOW_MESSAGE';
+export const FETCH_HIDE_MESSAGE = 'FETCH_HIDE_MESSAGE';
 
 // Token
 export const LOAD_TOKEN         = 'LOAD_TOKEN';

@@ -26,14 +26,14 @@ export const registration = (req,res) => {
     .then(user => {
         if (user) {
             res.status(200).send({
-                authorized: false,
+                registered: false,
                 message: EMAIL_DUPLICATE
             });
         } else {
             const token = jwt.sign({ id: newUser._id }, jwtsecret, { expiresIn: 86400 });
             newUser.save().then(item => {
                 res.status(200).send({
-                    authorized: true,
+                    registered: true,
                     token,
                     message: USER_CREATE_SUCCESS,
                     password

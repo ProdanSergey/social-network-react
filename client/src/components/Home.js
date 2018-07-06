@@ -8,11 +8,11 @@ class Home extends React.Component {
   
   render() {
     return (
-      <article className="col-11 wall">
+      <div className="col-11">
         {this.props.token ? 
               <Wall/> :
                 <Welcome/>}
-      </article>
+      </div>
     )
   }
 }
