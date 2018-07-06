@@ -49,3 +49,12 @@ export const authenticateUser = request => {
         data: request
     })
 }
+
+export const searchUsers = request => {
+    return buildRequest({
+        url: '/api/search',
+        method: methods.POST,
+        isStringify: true,
+        data: request
+    })
+}

@@ -97,7 +97,7 @@ class RegForm extends React.Component {
                         fieldName={'gender'}
                         fieldType={'select'}
                         fieldValue={'Choose...'}
-                        defaultValue="default"
+                        defaultValue={'default'}
                         form={form}
                         options={['Male', 'Female']}
                         onUpdate={this.onUpdate}
@@ -109,7 +109,7 @@ class RegForm extends React.Component {
                         fieldName={'age'}
                         fieldType={'select'}
                         fieldValue={'Choose...'}
-                        defaultValue="default"
+                        defaultValue={'default'}
                         form={form}
                         options={createSelectItems(1,99)}
                         onUpdate={this.onUpdate}

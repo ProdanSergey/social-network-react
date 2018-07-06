@@ -18,9 +18,10 @@ class AccountInput extends React.Component {
     
     handleSubmit(event) {
         event.preventDefault();
+        const { onUpdate, fieldValue } = this.props
         const target = document.querySelector(`input[name="${event.target.name}"]`);
         const { name, value } = target;
-        if (value) this.props.onUpdate({event: 'submit', name, value});
+        if (value !== fieldValue) onUpdate({event: 'submit', name, value});
     }
 
     render () {
@@ -36,7 +37,7 @@ class AccountInput extends React.Component {
                     type={fieldType}
                     name={fieldName}
                     className={inputClass(form[fieldName])}
-                    placeholder={fieldValue}
+                    defaultValue={fieldValue}
                     onChange={this.handleChange}/>
                 <div className="input-group-append">
                     <button 

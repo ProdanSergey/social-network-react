@@ -8,6 +8,7 @@ import * as methods           from '../constants/fetch';
 import * as constants         from '../constants/global';
 
 import Input from '../views/Input';
+import SearchResult from '../views/SearchPage/SearchResult';
 
 class Search extends React.Component {
 
@@ -18,33 +19,59 @@ class Search extends React.Component {
     }
 
     onUpdate(event) {
-        let { value, name, type } = event;
+        let { value, name, type, onclick } = event;
         this.props.storeFieldData(name, type, value);
+        if (onclick) {
+            this.handleSubmit()
+        }
+    }
+
+    handleSubmit() {
+        const form = validateForm({
+            data: this.props.form, 
+            asFormData: false
+        });
+        if (form) {
+            this.props.fetchUser(form, methods.SEARCH_USERS);
+        } else {
+            console.log('form invalid')
+        }
     }
     
     render() {
         const {
             form,
-            fetching
+            response = false
         } = this.props
         return(
             <div className="col-11">
                 <div className="row searchpage no-gutters">
-                    <section className="col searchpage__info ">
+                    <section className="col searchpage__form">
                         <form>
-                        <div className="form-group">
-                            <label htmlFor="search">Search your friends!</label>
-                            <Input 
-                                fieldName={'search'}
-                                fieldType={'search'}
-                                fieldValue={'Search...'}
-                                fieldHelp={'searchHelp'}
-                                helpText={constants.INPUT_ALERT_INVALID}
-                                form={form}
-                                onUpdate={this.onUpdate}
-                            />
-                        </div>
+                            <div className="form-group">
+                                <label htmlFor="search">Search your friends!</label>
+                                <Input 
+                                    fieldName={'search'}
+                                    fieldType={'search'}
+                                    fieldValue={'Search...'}
+                                    fieldHelp={'searchHelp'}
+                                    helpText={constants.INPUT_ALERT_INVALID}
+                                    button={{
+                                        buttonSide: 'append',
+                                        buttonClass: 'primary',
+                                        buttonText: 'Search'
+                                    }}
+                                    required={true}
+                                    form={form}
+                                    onUpdate={this.onUpdate}
+                                />
+                            </div>
                         </form>
+                    </section>
+                </div>
+                <div className="row searchpage no-gutters">
+                    <section className="col searchpage__result">    
+                        <SearchResult searchResult={response}/>
                     </section>
                 </div>
             </div>

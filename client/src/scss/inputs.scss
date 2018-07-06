@@ -1,0 +1,33 @@
+.input-wrapper {
+    position: relative;
+    display: flex;
+    .input-button {
+        
+    }
+    .input-field {
+        width: 100%;
+    }
+}
+
+.prepend {
+    flex-direction: row;
+    .input-field > input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    .input-button > button {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
+.append {
+    flex-direction: row-reverse;
+    .input-field > input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .input-button > button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}

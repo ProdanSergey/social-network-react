@@ -8,7 +8,7 @@ class Navigation extends React.Component {
     render() {
       return (
             <header className="row header no-gutters">
-                <div className="col logo"><img src="/icons/react.svg" width="50" height="50" className="d-inline-block align-top" alt=""/></div>
+                <div className="col logo"><i className="icon logo-badge"></i></div>
                 <div className="col-11">
                     <nav className="navbar navbar-expand-lg">
                         <Link to='/' className="navbar-brand">Social Network</Link>
