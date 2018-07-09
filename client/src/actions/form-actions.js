@@ -12,11 +12,6 @@ export const storeFieldData = (name, type, value) => ({
   }
 });
 
-export const switchFieldMode = (name, value) => ({
-  type: types.SWITCH_FIELD_MODE,
-  payload: { [name]: value }
-});
-
 export const formValid = () => ({
   type: types.FORM_VALID
 });

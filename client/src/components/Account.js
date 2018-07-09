@@ -1,16 +1,16 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
+
 import { validateForm }       from '../assets/validateForm';
 import { parseUploadFile }    from '../assets/parseUploadFile';
 
-import { 
-    storeFieldData,
-    switchFieldMode }         from '../actions/form-actions';
+import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
-import Spinner                from '../views/Spinner';
+import * as constants         from '../constants/global';
 
+import Spinner                from '../views/Spinner';
 import EditableAccountInput   from '../views/AccountPage/EditableAccountInput';
 
 class Account extends React.Component {
@@ -18,8 +18,16 @@ class Account extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            avatar_preview: null
+            avatar_preview: null,
+            switchers: {
+                firstName: false,
+                middleName: false,
+                lastName: false,
+                image: false
+            },
         };
+
+        this.focus = this.focus.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
     }
 
@@ -29,32 +37,47 @@ class Account extends React.Component {
             fetchUser(null, methods.GET_USER);
     }
 
-    onUpdate(payload) {
-        const { event, value, name, type } = payload;
-        const { storeFieldData, switchFieldMode} = this.props;
-        if (event === 'change') {
-            storeFieldData(name, type, value);
+    onUpdate(event) {
+        let { value, name, type, tagName, dataset, files } = event.target;
+        const { switchers } = this.state;
+        if (event.type === 'change') {
+            this.props.storeFieldData(name, type, value);
             if(type === 'file') {
+                value = files[0] || false;
                 parseUploadFile(value)
-                    .then(file => this.setState({...this.state, avatar_preview: file.target.result}))
-                    .catch(error => this.setState({...this.state, avatar_preview: null}))
-            }
-        } 
-        if (event === 'submit') {
-            const form = validateForm({
-                data: this.props.form, 
-                asFormData: true
-            });
-            if (form) {
-                this.props.fetchUser(form, methods.PUT_USER);
-                switchFieldMode(name, false);
-            } else {
-                console.log('form invalid')
+                    .then(file => this.setState({ avatar_preview: file.target.result }))
+                    .catch(error => this.setState({ avatar_preview: null }))
             }
         }
-        if (event === 'switch') {
-            switchFieldMode(name, true)
+        if (event.type === 'click') {
+            if(tagName === 'BUTTON') {           
+                console.log(event)
+                const form = validateForm({
+                    data: this.props.form, 
+                    asFormData: true
+                });
+                if (form) {
+                    this.props.fetchUser(form, methods.PUT_USER);
+                } else {
+                    console.log('form invalid')
+                }
+            }
+            if(tagName === 'I') {
+                this.setState({ switchers: {...switchers, [dataset.name]: !switchers[dataset.name]} })
+            }
         }
+        if (event.type === 'blur') {
+            if (type !== 'file') {
+                setTimeout(() => {
+                    this.setState({ switchers: {...switchers, [name]: !switchers[name]} })
+                }, 250)
+            }
+        }
+        event.preventDefault();
+    }
+
+    focus() {
+        this.textInput.focus();
     }
 
     render() {
@@ -66,12 +89,28 @@ class Account extends React.Component {
                 lastName,
                 avatar
             },
-            form,
-            switchers
+            form
         } = this.props
+
         const {
-            avatar_preview
+            avatar_preview,
+            switchers
         } = this.state
+
+        const inputOptions = {
+            autofocus: true,
+            required: false,
+            helpText: constants.INPUT_ALERT_INVALID,
+            switchers: switchers,
+            ref: (input) => { this.textInput = input; },
+            button: {
+                buttonSide: 'append',
+                buttonClass: 'secondary',
+                buttonText: 'Send'
+            },
+            form: form,
+            onUpdate: this.onUpdate
+        }
         return(
             <div className="col-11">
                 <div className="row accountpage no-gutters">
@@ -80,30 +119,30 @@ class Account extends React.Component {
                         <form hidden={fetching}>
                             <label htmlFor="firstName">First Name</label>
                             <EditableAccountInput
-                                fieldName={'firstName'}
-                                fieldType={'text'}
-                                fieldValue={firstName}
-                                form={form}
-                                switchers={switchers}
-                                onUpdate={this.onUpdate}
+                                inputOptions={{...inputOptions,
+                                    fieldName: 'firstName',
+                                    fieldType: 'text',
+                                    fieldValue: firstName,
+                                    fieldHelp: 'firstNameHelp',  
+                                }}
                             />
                             <label htmlFor="middleName">Middle Name</label>
                             <EditableAccountInput
-                                fieldName={'middleName'}
-                                fieldType={'text'}
-                                fieldValue={middleName}
-                                form={form}
-                                switchers={switchers}
-                                onUpdate={this.onUpdate}
+                                inputOptions={{...inputOptions,
+                                    fieldName: 'middleName',
+                                    fieldType: 'text',
+                                    fieldValue: middleName,
+                                    fieldHelp: 'middleNameHelp',  
+                                }}
                             />
                             <label htmlFor="lastName">Last Name</label>
                             <EditableAccountInput
-                                fieldName={'lastName'}
-                                fieldType={'text'}
-                                fieldValue={lastName}
-                                form={form}
-                                switchers={switchers}
-                                onUpdate={this.onUpdate}
+                                inputOptions={{...inputOptions,
+                                    fieldName: 'lastName',
+                                    fieldType: 'text',
+                                    fieldValue: lastName,
+                                    fieldHelp: 'lastNameHelp',  
+                                }}
                             />
                         </form>
                     </section>
@@ -115,11 +154,13 @@ class Account extends React.Component {
                                 <img src={avatar_preview || avatar} alt="user avatar"/>
                             </div>
                             <EditableAccountInput
-                                fieldName={'image'}
-                                fieldType={'file'}
-                                form={form}
-                                switchers={switchers}
-                                onUpdate={this.onUpdate}
+                                inputOptions={{...inputOptions,
+                                    autofocus: false,
+                                    fieldName: 'image',
+                                    fieldType: 'file',
+                                    fieldValue: 'Choose your photo',
+                                    fieldHelp: 'imageHelp', 
+                                }}
                             />
                         </form>
                     </section>
@@ -132,7 +173,6 @@ class Account extends React.Component {
 const mapStateToProps = function(store) {
     return {
         form:      store.formData.form,
-        switchers: store.formData.switchers,
         fetching:  store.userData.fetching,
         response:  store.userData.response,
     }
@@ -142,9 +182,6 @@ const mapStateToProps = function(store) {
     return {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));
-        },
-        switchFieldMode: (name, value) => {
-            dispatch(switchFieldMode(name, value));
         },
         fetchUser: (userForm, method) => {
             dispatch(fetchUser(userForm, method));

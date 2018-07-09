@@ -6,6 +6,10 @@
     }
     .input-field {
         width: 100%;
+        margin-bottom: 1rem;
+        input[type=file] {
+            // display: none;
+        }
     }
 }
 

@@ -22,7 +22,7 @@ class RegForm extends React.Component {
 
 
   onUpdate(event) {
-    let { value, name, type, files } = event;
+    let { value, name, type, files } = event.target;
     if (type === 'file') value = files[0] || false;
     this.props.storeFieldData(name, type, value);
   }
@@ -45,6 +45,14 @@ class RegForm extends React.Component {
       form,
       fetching
     } = this.props
+    const inputOptions = {
+      autofocus: false,
+      button: false,
+      required: false,
+      helpText: constants.INPUT_ALERT_INVALID,
+      form: form,
+      onUpdate: this.onUpdate
+    }
     return(
       <div className="col-11">
         <div className="row registration">
@@ -53,40 +61,36 @@ class RegForm extends React.Component {
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
                 <Input 
-                  fieldName={'firstName'}
-                  fieldType={'text'}
-                  fieldValue={'Enter your first name'}
-                  fieldHelp={'firstNameHelp'}
-                  required={true}
-                  helpText={constants.INPUT_ALERT_INVALID}
-                  form={form}
-                  onUpdate={this.onUpdate}
+                  inputOptions={{...inputOptions,
+                    fieldName: 'firstName',
+                    fieldType: 'text',
+                    fieldValue: 'Enter your first name',
+                    fieldHelp: 'firstNameHelp',
+                    required: true
+                  }}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="middleName">Middle Name</label>
                 <Input 
-                  fieldName={'middleName'}
-                  fieldType={'text'}
-                  fieldValue={'Enter your middle name'}
-                  fieldHelp={'middleNameHelp'}
-                  required={false}
-                  helpText={constants.INPUT_ALERT_INVALID}
-                  form={form}
-                  onUpdate={this.onUpdate}
+                  inputOptions={{...inputOptions,
+                    fieldName: 'middleName',
+                    fieldType: 'text',
+                    fieldValue: 'Enter your middle name',
+                    fieldHelp: 'middleNameHelp'
+                  }}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
                 <Input 
-                  fieldName={'lastName'}
-                  fieldType={'text'}
-                  fieldValue={'Enter your last name'}
-                  fieldHelp={'lastNameHelp'}
-                  required={true}
-                  helpText={constants.INPUT_ALERT_INVALID}
-                  form={form}
-                  onUpdate={this.onUpdate}
+                  inputOptions={{...inputOptions,
+                    fieldName: 'lastName',
+                    fieldType: 'text',
+                    fieldValue: 'Enter your last name',
+                    fieldHelp: 'lastNameHelp',
+                    required: true
+                  }}
                 />
               </div>
               <div className="form-group">
@@ -94,25 +98,25 @@ class RegForm extends React.Component {
                     <div className="col-6">
                       <label htmlFor="gender">Gender</label>
                       <Input 
-                        fieldName={'gender'}
-                        fieldType={'select'}
-                        fieldValue={'Choose...'}
-                        defaultValue={'default'}
-                        form={form}
-                        options={['Male', 'Female']}
-                        onUpdate={this.onUpdate}
+                        inputOptions={{...inputOptions,
+                          fieldName: 'gender',
+                          fieldType: 'select',
+                          fieldValue: 'Choose...',
+                          defaultValue: 'default',
+                          selectOptions: ['Male', 'Female']
+                        }}
                       />
                     </div>
                     <div className="col-6">
                       <label htmlFor="age">Age</label>
-                      <Input 
-                        fieldName={'age'}
-                        fieldType={'select'}
-                        fieldValue={'Choose...'}
-                        defaultValue={'default'}
-                        form={form}
-                        options={createSelectItems(1,99)}
-                        onUpdate={this.onUpdate}
+                      <Input
+                        inputOptions={{...inputOptions,
+                          fieldName: 'age',
+                          fieldType: 'select',
+                          fieldValue: 'Choose...',
+                          defaultValue: 'default',
+                          selectOptions: createSelectItems(1,99)
+                        }}
                       />
                     </div>
                 </div>
@@ -120,27 +124,25 @@ class RegForm extends React.Component {
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
                 <Input 
-                  fieldName={'email'}
-                  fieldType={'email'}
-                  fieldValue={'Enter your email'}
-                  fieldHelp={'emailHelp'}
-                  required={true}
-                  helpText={constants.INPUT_ALERT_INVALID}
-                  form={form}
-                  onUpdate={this.onUpdate}
+                  inputOptions={{...inputOptions,
+                    fieldName: 'email',
+                    fieldType: 'email',
+                    fieldValue: 'Enter your email',
+                    fieldHelp: 'emailHelp',
+                    required: true
+                  }}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="image">Choose photo...</label>
                 <Input 
-                  fieldName={'image'}
-                  fieldType={'file'}
-                  fieldValue={'Choose your photo'}
-                  fieldHelp={'imageHelp'}
-                  required={true}
-                  helpText={constants.INPUT_ALERT_INVALID}
-                  form={form}
-                  onUpdate={this.onUpdate}
+                  inputOptions={{...inputOptions,
+                    fieldName: 'image',
+                    fieldType: 'file',
+                    fieldValue: 'Choose your photo',
+                    fieldHelp: 'imageHelp',
+                    required: true
+                  }}
                 />
               </div>
               <div className="form-group">

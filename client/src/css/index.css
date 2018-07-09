@@ -192,6 +192,7 @@ h1, h2, h3 {
 }
 
 .main .searchpage .card {
+  position: relative;
   -webkit-box-flex: 0;
   -ms-flex: 0 0 45%;
   flex: 0 0 45%;
@@ -237,6 +238,17 @@ h1, h2, h3 {
 
 .main .searchpage .card__info span {
   font-weight: bold;
+}
+
+.main .searchpage .card__follow {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.main .searchpage .card__follow .icon {
+  width: 25px;
+  height: 25px;
 }
 
 .main .spinner {

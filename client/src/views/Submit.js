@@ -2,25 +2,15 @@ import React           from 'react';
 
 class Submit extends React.Component {
 
-    constructor(props){
-        super(props)
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        this.props.onUpdate(event.target);
-    }
-
     render(){
         const {
-            button = false
+            button = false,
+            onUpdate
         } = this.props
 
         return(
             <div hidden={!button} className={`input-button`}>
-                    <button className={`btn btn-outline-${button.buttonClass}`} type="button" onClick={this.handleSubmit}>{button.buttonText}</button>
+                    <button className={`btn btn-outline-${button.buttonClass}`} type="button" onClick={onUpdate}>{button.buttonText}</button>
             </div>
         )
     }
