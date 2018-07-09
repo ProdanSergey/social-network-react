@@ -1,1 +1,1 @@
-export const DEFAULT_AVATAR = '..\\client\\public\\images\\no-avatar.jpg';
+export const DEFAULT_AVATAR = '\\images\\no-avatar.jpg';

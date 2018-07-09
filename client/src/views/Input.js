@@ -1,6 +1,8 @@
 import React           from 'react';
 import { inputClass }  from '../assets/inputsClassHendler';
 
+import Submit          from '../views/Submit'
+
 class Input extends React.Component {
 
     constructor(props){
@@ -22,7 +24,9 @@ class Input extends React.Component {
             helpText,
             required,
             defaultValue,
-            form
+            button = false,
+            form,
+            onUpdate
         } = this.props
         if(fieldType === 'select') {
             return (
@@ -37,15 +41,21 @@ class Input extends React.Component {
             )
         }
         return(
-            <div>
-                <input 
-                    type={fieldType}
-                    required={required}
-                    name={fieldName}
-                    className={inputClass(form[fieldName])}
-                    onChange={this.handleChange}
-                    aria-describedby={fieldHelp} placeholder={fieldValue}/>
-                <small id={fieldHelp} className={inputClass(form[fieldName], true)}>{helpText}</small>
+            <div className={`input-wrapper ${button.buttonSide}`}>
+                <Submit 
+                    button={button}
+                    onUpdate={onUpdate}
+                />
+                <div className="input-field">
+                    <input 
+                        type={fieldType}
+                        required={required}
+                        name={fieldName}
+                        className={inputClass(form[fieldName])}
+                        onChange={this.handleChange}
+                        aria-describedby={fieldHelp} placeholder={fieldValue}/>
+                    <small id={fieldHelp} className={inputClass(form[fieldName], true)}>{helpText}</small>
+                </div>
             </div>
         )
     }

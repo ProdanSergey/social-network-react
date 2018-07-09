@@ -1,10 +1,11 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
+import { parseUploadFile }    from '../assets/parseUploadFile';
 
 import { 
     storeFieldData,
-    switchFieldMode }           from '../actions/form-actions';
+    switchFieldMode }         from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
 
 import * as methods           from '../constants/fetch';
@@ -15,14 +16,17 @@ import EditableAccountInput   from '../views/AccountPage/EditableAccountInput';
 class Account extends React.Component {
 
     constructor(props) {
-        super(props)
-
+        super(props);
+        this.state = {
+            avatar_preview: null
+        };
         this.onUpdate = this.onUpdate.bind(this);
     }
 
     componentDidMount() {
-        if (!this.props.response.authenticated)
-            this.props.fetchUser(null, methods.GET_USER);
+        const { fetchUser, response: {authenticated} } = this.props;
+        if (!authenticated)
+            fetchUser(null, methods.GET_USER);
     }
 
     onUpdate(payload) {
@@ -30,6 +34,11 @@ class Account extends React.Component {
         const { storeFieldData, switchFieldMode} = this.props;
         if (event === 'change') {
             storeFieldData(name, type, value);
+            if(type === 'file') {
+                parseUploadFile(value)
+                    .then(file => this.setState({...this.state, avatar_preview: file.target.result}))
+                    .catch(error => this.setState({...this.state, avatar_preview: null}))
+            }
         } 
         if (event === 'submit') {
             const form = validateForm({
@@ -60,6 +69,9 @@ class Account extends React.Component {
             form,
             switchers
         } = this.props
+        const {
+            avatar_preview
+        } = this.state
         return(
             <div className="col-11">
                 <div className="row accountpage no-gutters">
@@ -100,7 +112,7 @@ class Account extends React.Component {
                         <form hidden={fetching}>
                             <label htmlFor="image">Avatar</label>
                             <div className="image">
-                                <img src={avatar} alt="user avatar"/>
+                                <img src={avatar_preview || avatar} alt="user avatar"/>
                             </div>
                             <EditableAccountInput
                                 fieldName={'image'}

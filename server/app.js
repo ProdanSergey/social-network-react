@@ -14,6 +14,7 @@ import { jwtsecret }       from './constants/jwtsecret';
 import appRegRoutes        from './routes/reg.route';
 import appAuthRoutes       from './routes/auth.route';
 import appDataRoutes       from './routes/data.route';
+import appSearchRoutes     from './routes/search.route';
 
 var jwtCheck = jwtMiddleware(jwtsecret)
 
@@ -46,6 +47,7 @@ SourceMapSupport.install();
 app.use('/api/reg', Validation, appRegRoutes);
 app.use('/api/auth', Validation, appAuthRoutes);
 app.use('/api/data', jwtCheck, Validation, appDataRoutes);
+app.use('/api/search', jwtCheck, Validation, appSearchRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });

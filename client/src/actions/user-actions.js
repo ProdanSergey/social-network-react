@@ -16,14 +16,6 @@ export const fetchUserFailure = response => ({
   payload: { response }
 });
 
-export const fetchShowMessage = () => ({
-  type: types.FETCH_SHOW_MESSAGE
-});
-
-export const fetchHideMessage = () => ({
-  type: types.FETCH_HIDE_MESSAGE
-});
-
 export const fetchUser = (data, payload) => {
   return (dispatch, getState) => {
     dispatch(fetchUserBegin());

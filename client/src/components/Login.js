@@ -53,7 +53,7 @@ class Login extends React.Component {
                                 <Input 
                                     fieldName={'email'}
                                     fieldType={'email'}
-                                    fieldValue={'Search...'}
+                                    fieldValue={'Enter your email'}
                                     fieldHelp={'emailHelp'}
                                     helpText={constants.INPUT_ALERT_INVALID}
                                     form={form}
@@ -65,8 +65,8 @@ class Login extends React.Component {
                                 <Input 
                                     fieldName={'password'}
                                     fieldType={'password'}
-                                    fieldValue={'Search...'}
-                                    fieldHelp={'emailHelp'}
+                                    fieldValue={'Enter your password'}
+                                    fieldHelp={'passwordHelp'}
                                     helpText={constants.INPUT_ALERT_INVALID}
                                     form={form}
                                     onUpdate={this.onUpdate}
