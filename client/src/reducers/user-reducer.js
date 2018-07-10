@@ -2,7 +2,9 @@ import * as types from '../actions/action-types';
 
 const initialState = {
     fetching: false,
-    response: {}
+    ready: false,
+    response: {},
+    user: {}
 };
 
 export default function(state = initialState, action) {
@@ -12,7 +14,6 @@ export default function(state = initialState, action) {
               ...state,
               fetching: true,
             };
-      
         case types.FETCH_USER_SUCCESS:
             return {
               ...state,
@@ -25,6 +26,12 @@ export default function(state = initialState, action) {
               ...state,
               fetching: false,
               response: action.payload.response
+            };
+        case types.STORE_USER:
+            return {
+              ...state,
+              ready: true,
+              user: action.payload.user,
             };
         default:
             return state;

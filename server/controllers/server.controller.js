@@ -20,19 +20,23 @@ export const registration = (req,res) => {
     .then(user => {
         if (user) {
             res.status(200).send({
-                registered: false,
-                alert: true,
-                message: messages.EMAIL_DUPLICATE
+                response: {
+                    registered: false,
+                    alert: true,
+                    message: messages.EMAIL_DUPLICATE
+                }
             });
         } else {
             const token = jwt.sign({ id: newUser._id }, jwtsecret, { expiresIn: 86400 });
             newUser.save().then(item => {
                 res.status(200).send({
-                    registered: true,
-                    alert: true,
+                    response: {
+                        registered: true,
+                        alert: true,
+                        message: messages.USER_CREATE_SUCCESS,
+                        password
+                    },
                     token,
-                    message: messages.USER_CREATE_SUCCESS,
-                    password
                 });
             })
         }
@@ -46,9 +50,11 @@ export const login = (req, res) => {
     .then(user => {
         if (!user) {
             res.status(200).send({
-                authorized: false,
-                alert: true,
-                message: messages.USER_DOES_NOT_EXIST,
+                response: {
+                    authorized: false,
+                    alert: true,
+                    message: messages.USER_DOES_NOT_EXIST,
+                }
             });
         } else {
             const hash = user.password;
@@ -56,16 +62,20 @@ export const login = (req, res) => {
                 if (result) {
                     const token = jwt.sign({ id: user._id }, jwtsecret, { expiresIn: 86400 });
                     res.status(200).send({
-                        authorized: true,
-                        alert: false,
-                        token,
-                        message: messages.USER_LOGIN_SUCCESS
+                        response: {
+                            authorized: true,
+                            alert: false,
+                            message: messages.USER_LOGIN_SUCCESS
+                        },
+                        token
                     });
                 } else {
                     res.status(200).send({
-                        authorized: false,
-                        alert: true,
-                        message: messages.AUTHORIZATION_FAILED
+                        response: {
+                            authorized: false,
+                            alert: true,
+                            message: messages.AUTHORIZATION_FAILED
+                        }
                     });
                 }
             });
@@ -84,20 +94,26 @@ export const userInfo = (req, res) => {
     query.then(user => {
         if(!user) {
             res.status(200).send({
-                authenticated: false,
-                alert: true,
-                message: messages.AUTHENTICATION_FAILED
+                response: {
+                    authenticated: false,
+                    alert: true,
+                    message: messages.AUTHENTICATION_FAILED
+                }
             });
         } else {
             const { firstName, middleName, lastName, avatar, friends } = user;
             res.status(200).send({
-                authenticated: true,
-                message: messages.AUTHENTICATION_SUCCESS,
-                firstName,
-                middleName,
-                lastName,
-                avatar,
-                friends
+                response: {
+                    authenticated: true,
+                    message: messages.AUTHENTICATION_SUCCESS
+                },
+                user: {
+                    firstName,
+                    middleName,
+                    lastName,
+                    avatar,
+                    friends
+                }
             });
         }
     })
@@ -126,27 +142,35 @@ export const search = (req, res) => {
 
 export const addOrRemoveFriend = (req, res) => {
     const { method, body: {friend}, tokenData: {id} } = req;
+    console.log(method)
     const query = method === 'PUT' ? 
-        User.findByIdAndUpdate(id, {$push: {'friends': friend}}, {new: true}) : 
-        User.findByIdAndDelete(id, {$pull: {'friends': friend}}, {safe: true})
-    query.then(user => {
+        {$push: {'friends': friend}} : 
+        {$pull: {'friends': friend}}
+    User.findByIdAndUpdate(id, query, {new: true}) 
+    .then(user => {
         if(!user) {
             res.status(200).send({
-                authenticated: false,
-                alert: true,
-                message: messages.AUTHENTICATION_FAILED
+                response: {
+                    authenticated: false,
+                    alert: true,
+                    message: messages.AUTHENTICATION_FAILED
+                }
             });
         } else {
             const { firstName, middleName, lastName, avatar, friends } = user;
             res.status(200).send({
-                authenticated: true,
-                alert: false,
-                message: messages.AUTHENTICATION_SUCCESS,
-                firstName,
-                middleName,
-                lastName,
-                avatar,
-                friends
+                response: {
+                    authenticated: true,
+                    alert: false,
+                    message: messages.AUTHENTICATION_SUCCESS
+                },
+                user: {
+                    firstName,
+                    middleName,
+                    lastName,
+                    avatar,
+                    friends
+                }
             });
         }
     })
@@ -157,7 +181,6 @@ export const getFriends = (req, res) => {
     const { tokenData: {id} } = req;
     User.findById(id) 
     .then(user => {
-        
         if(!user) {
             res.status(200).send({
                 message: messages.AUTHENTICATION_FAILED

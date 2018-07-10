@@ -12,10 +12,11 @@ const deleteTokenFromStore = () => ({
     type: types.DELETE_TOKEN,
 });
 
-export const relogin = (token, method) => {
+export const relogin = (method, token) => {
   return dispatch => {
+    console.log(method)
     dispatch(loadTokenToStore(token));
-    dispatch(fetchUser(token, method));
+    dispatch(fetchUser(method));
   };
 }
 

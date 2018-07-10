@@ -6,7 +6,14 @@ import Spinner from '../views/Spinner'
 class Wall extends React.Component {
 
     render() {
-        const { response, fetching } = this.props
+        const { 
+            user: {
+                avatar,
+                firstName,
+                lastName
+            },
+            fetching 
+        } = this.props
         if (fetching) return <Spinner/>
         return(
             <div className="row wallpage no-gutters">
@@ -15,11 +22,11 @@ class Wall extends React.Component {
                     <div className="menu">
                     <div className="user">
                         <div className="user__pic">
-                        <img src={response.avatar}
+                        <img src={avatar}
                         alt="user avatar"/>
                         </div>
                         <div className="user__name">
-                        <h2>{response.firstName +' '+ response.lastName}</h2>
+                        <h2>{firstName +' '+ lastName}</h2>
                         </div>
                     </div>
                     </div> 
@@ -33,8 +40,7 @@ class Wall extends React.Component {
 const mapStateToProps = function(store) {
     return {
         fetching: store.userData.fetching,
-        response: store.userData.response,
-        token: store.tokenState.token
+        user:     store.userData.user
     }
 };
 

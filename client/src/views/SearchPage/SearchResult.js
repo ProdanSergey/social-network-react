@@ -10,7 +10,7 @@ class SearchResult extends React.Component {
                 response: {
                     users
                 },
-                personalInfo: {
+                user: {
                     friends
                 },
                 ready

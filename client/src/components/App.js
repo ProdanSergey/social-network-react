@@ -18,7 +18,7 @@ class App extends React.Component {
 
   componentDidMount() {
     const userState = loadState();
-    if (userState) this.props.relogin(methods.GET_USER);
+    if (userState) this.props.relogin(methods.GET_USER, userState);
   }
 
   render(){
@@ -40,8 +40,8 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = (dispatch, state) => {
   return {
-    relogin: (token, method) => {
-      dispatch(relogin(token, method));
+    relogin: (method, data) => {
+      dispatch(relogin(method, data));
     }
   }
 };

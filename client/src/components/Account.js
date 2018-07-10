@@ -77,7 +77,7 @@ class Account extends React.Component {
     render() {
         const {
             fetching,
-            response: {
+            user: {
                 firstName,
                 middleName,
                 lastName,
@@ -168,7 +168,7 @@ const mapStateToProps = function(store) {
     return {
         form:      store.formData.form,
         fetching:  store.userData.fetching,
-        response:  store.userData.response,
+        user:      store.userData.user,
     }
 };
   

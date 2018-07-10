@@ -1,17 +1,28 @@
-import { login }            from '../../actions/token-actions';
-import { clearFormData }    from '../../actions/form-actions';
-import { isEmpty }          from '../utils/isEmpty';
-import { push }    from 'connected-react-router';
+import { login }      from '../../actions/token-actions';
+import { 
+    storeUser,
+    fetchUserSuccess
+}                     from '../../actions/user-actions';
+import { push }       from 'connected-react-router';
 
-export const getFetchResponse = (dispatch, getState, res) => {
-    const { authorized, registered, token} = res
-    const { form } = getState().formData
+export const getFetchResponse = (dispatch, res) => {
+    const { 
+        response,
+        response: {
+            authorized, 
+            registered, 
+            authenticated
+        },
+        token, 
+        user
+    } = res
     if(authorized || registered) {
         dispatch(login(token));
         dispatch(push('/'));
     }
-    if(!isEmpty(form)) {
-        dispatch(clearFormData());
+    if(authenticated) {
+        dispatch(storeUser(user));
     }
+    dispatch(fetchUserSuccess(response));
     return res;
 }

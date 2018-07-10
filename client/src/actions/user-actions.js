@@ -2,7 +2,7 @@ import * as types             from './action-types';
 import { getFetchMethod }     from '../assets/fetch/getFetchMethod';
 import { getFetchResponse }   from '../assets/fetch/getFetchResponse';
 
-export const fetchUserBegin = () => ({
+const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
 });
 
@@ -11,20 +11,22 @@ export const fetchUserSuccess = response => ({
   payload: { response }
 });
 
-export const fetchUserFailure = response => ({
+const fetchUserFailure = response => ({
   type: types.FETCH_USER_FAILURE,
   payload: { response }
 });
 
+export const storeUser = (user) => ({
+  type: types.STORE_USER,
+  payload: { user }
+});
+
 export const fetchUser = (payload, data) => {
-  return (dispatch, getState) => {
+  console.log(payload, data)
+  return dispatch => {
     dispatch(fetchUserBegin());
     return getFetchMethod(payload)(data)
-    .then(res => {
-      dispatch(fetchUserSuccess(res));
-      return res;
-    })
-    .then(res => getFetchResponse(dispatch, getState, res))
+    .then(res => getFetchResponse(dispatch, res))
     .catch(error => dispatch(fetchUserFailure(error)));
   };
 }
