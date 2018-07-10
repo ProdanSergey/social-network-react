@@ -156,6 +156,7 @@ h1, h2, h3 {
             padding: 1rem;
         }
         .card {
+            position: relative;
             flex: 0 0 45%;
             display: flex;
             margin: 1rem;
@@ -186,7 +187,19 @@ h1, h2, h3 {
                     font-weight: bold;
                 }
             }
+            &__follow {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                .icon {
+                    width: 25px;
+                    height: 25px;
+                }
+            }
         }
+    }
+    .friendspage {
+        
     }
     .spinner {
         display: flex;

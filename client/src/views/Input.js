@@ -1,42 +1,37 @@
 import React           from 'react';
 import { inputClass }  from '../assets/inputsClassHendler';
-
 import Submit          from '../views/Submit'
 
 class Input extends React.Component {
 
-    constructor(props){
-        super(props)
-
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange(event) {
-        this.props.onUpdate(event.target);
+    componentDidMount() {
+        if (this.props.inputOptions.autofocus) this.textInput.focus();
     }
 
     render(){
         const { 
+            autofocus,
+            required,
+            button,
             fieldName,
             fieldType,
             fieldValue,
             fieldHelp,
             helpText,
-            required,
             defaultValue,
-            button = false,
+            selectOptions = [],
             form,
             onUpdate
-        } = this.props
+        } = this.props.inputOptions
         if(fieldType === 'select') {
             return (
                 <select 
                     name={fieldName}
                     className={inputClass(form[fieldName])}
-                    onChange={this.handleChange}
+                    onChange={onUpdate}
                     defaultValue={defaultValue}>
                     <option disabled value={defaultValue}>{fieldValue}</option>
-                    {this.props.options.map((item, i) => <option key={i} name={item.toLowerCase()}>{item}</option>)}
+                    {selectOptions.map((item, i) => <option key={i} name={item.toLowerCase()}>{item}</option>)}
                 </select>
             )
         }
@@ -47,12 +42,14 @@ class Input extends React.Component {
                     onUpdate={onUpdate}
                 />
                 <div className="input-field">
-                    <input 
+                    <input
+                        ref = {autofocus ? (input) => { this.textInput = input; } : false}
                         type={fieldType}
                         required={required}
                         name={fieldName}
                         className={inputClass(form[fieldName])}
-                        onChange={this.handleChange}
+                        onChange={onUpdate}
+                        onBlur={onUpdate}
                         aria-describedby={fieldHelp} placeholder={fieldValue}/>
                     <small id={fieldHelp} className={inputClass(form[fieldName], true)}>{helpText}</small>
                 </div>

@@ -21,7 +21,7 @@ class Login extends React.Component {
     }
 
     onUpdate(event) {
-        let { value, name, type } = event;
+        let { value, name, type } = event.target;
         this.props.storeFieldData(name, type, value);
     }
     
@@ -43,6 +43,14 @@ class Login extends React.Component {
             form,
             fetching
         } = this.props
+        const inputOptions = {
+            autofocus: false,
+            button: false,
+            required: false,
+            helpText: constants.INPUT_ALERT_INVALID,
+            form: form,
+            onUpdate: this.onUpdate
+        }
         return (
             <div className="col-11">
                 <div className="row login">
@@ -51,25 +59,25 @@ class Login extends React.Component {
                             <div className="form-group">
                                 <label htmlFor="email">Email address</label>
                                 <Input 
-                                    fieldName={'email'}
-                                    fieldType={'email'}
-                                    fieldValue={'Enter your email'}
-                                    fieldHelp={'emailHelp'}
-                                    helpText={constants.INPUT_ALERT_INVALID}
-                                    form={form}
-                                    onUpdate={this.onUpdate}
+                                    inputOptions={{...inputOptions,
+                                        fieldName: 'email',
+                                        fieldType: 'email',
+                                        fieldValue: 'Enter your email',
+                                        fieldHelp: 'emailHelp',
+                                        required: true
+                                    }}
                                 />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="password">Password</label>
                                 <Input 
-                                    fieldName={'password'}
-                                    fieldType={'password'}
-                                    fieldValue={'Enter your password'}
-                                    fieldHelp={'passwordHelp'}
-                                    helpText={constants.INPUT_ALERT_INVALID}
-                                    form={form}
-                                    onUpdate={this.onUpdate}
+                                    inputOptions={{...inputOptions,
+                                        fieldName: 'password',
+                                        fieldType: 'password',
+                                        fieldValue: 'Enter your password',
+                                        fieldHelp: 'passwordHelp',
+                                        required: true
+                                    }}
                                 />
                             </div>
                             <div className="form-group">

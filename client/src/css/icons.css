@@ -45,3 +45,11 @@
 .gender-female {
   background-image: url("/icons/gender/female.svg");
 }
+
+.star-blank {
+  background-image: url("/icons/star/star-blank.svg");
+}
+
+.star-filled {
+  background-image: url("/icons/star/star-filled.svg");
+}

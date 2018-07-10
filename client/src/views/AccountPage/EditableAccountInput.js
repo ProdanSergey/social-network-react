@@ -1,23 +1,28 @@
 import React        from 'react';
-import AccountInput from './Input';
-import EditSwitcher from './EditSwitcher';
-import {INPUT_TEXT_PLACEHOLDER } from '../../constants/global';
+import Input        from '../Input';
+import EditSwitcher from '../EditSwitcher';
+
+import * as constants from '../../constants/global';
 
 class EditableAccountInput extends React.Component {
 
     render() {
         const {
-            fieldName,
-            fieldType,
-            fieldValue,
-            form,
-            switchers,
-            onUpdate
+            inputOptions,
+            inputOptions: {
+                fieldName,
+                fieldValue,
+                switchers,
+            }
         } = this.props
         return(
-            switchers[fieldName] ?
-                <AccountInput fieldName={fieldName} fieldType={fieldType} fieldValue={fieldValue} form={form} onUpdate={onUpdate}/> :
-                <div className="data-field">{fieldValue || INPUT_TEXT_PLACEHOLDER}<EditSwitcher onUpdate={onUpdate} fieldName={fieldName}/></div>
+            switchers[fieldName]
+            ? <Input 
+                inputOptions={inputOptions}/>
+            : <div className="data-field">{fieldValue || constants.INPUT_TEXT_PLACEHOLDER}
+              <EditSwitcher 
+                inputOptions={inputOptions}/>
+            </div>
         )
     }
 

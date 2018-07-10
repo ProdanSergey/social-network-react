@@ -19,22 +19,22 @@ class Search extends React.Component {
     }
 
     onUpdate(event) {
-        let { value, name, type, onclick } = event;
-        this.props.storeFieldData(name, type, value);
-        if (onclick) {
-            this.handleSubmit()
+        let { value, name, type, tagName } = event.target;
+        if (event.type === 'change') {
+            this.props.storeFieldData(name, type, value);
         }
-    }
-
-    handleSubmit() {
-        const form = validateForm({
-            data: this.props.form, 
-            asFormData: false
-        });
-        if (form) {
-            this.props.fetchUser(form, methods.SEARCH_USERS);
-        } else {
-            console.log('form invalid')
+        if (event.type === 'click') {
+            if(tagName === 'BUTTON') {
+                const form = validateForm({
+                    data: this.props.form, 
+                    asFormData: false
+                });
+                if (form) {
+                    this.props.fetchUser(form, methods.SEARCH_USERS);
+                } else {
+                    console.log('form invalid')
+                }
+            }
         }
     }
     
@@ -43,6 +43,14 @@ class Search extends React.Component {
             form,
             response = false
         } = this.props
+        const inputOptions = {
+            autofocus: false,
+            button: false,
+            required: false,
+            helpText: constants.INPUT_ALERT_INVALID,
+            form: form,
+            onUpdate: this.onUpdate
+        }
         return(
             <div className="col-11">
                 <div className="row searchpage no-gutters">
@@ -50,20 +58,19 @@ class Search extends React.Component {
                         <form>
                             <div className="form-group">
                                 <label htmlFor="search">Search your friends!</label>
-                                <Input 
-                                    fieldName={'search'}
-                                    fieldType={'search'}
-                                    fieldValue={'Search...'}
-                                    fieldHelp={'searchHelp'}
-                                    helpText={constants.INPUT_ALERT_INVALID}
-                                    button={{
-                                        buttonSide: 'append',
-                                        buttonClass: 'primary',
-                                        buttonText: 'Search'
+                                <Input
+                                    inputOptions={{...inputOptions,
+                                        fieldName: 'search',
+                                        fieldType: 'search',
+                                        fieldValue: 'Search...',
+                                        fieldHelp: 'searchHelp',
+                                        required: true,
+                                        button: {
+                                            buttonSide: 'append',
+                                            buttonClass: 'primary',
+                                            buttonText: 'Search'
+                                        }
                                     }}
-                                    required={true}
-                                    form={form}
-                                    onUpdate={this.onUpdate}
                                 />
                             </div>
                         </form>
