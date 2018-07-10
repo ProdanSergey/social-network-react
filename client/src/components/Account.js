@@ -31,12 +31,6 @@ class Account extends React.Component {
         this.onUpdate = this.onUpdate.bind(this);
     }
 
-    componentDidMount() {
-        const { fetchUser, response: {authenticated} } = this.props;
-        if (!authenticated)
-            fetchUser(null, methods.GET_USER);
-    }
-
     onUpdate(event) {
         let { value, name, type, tagName, dataset, files } = event.target;
         const { switchers } = this.state;
@@ -57,7 +51,7 @@ class Account extends React.Component {
                     asFormData: true
                 });
                 if (form) {
-                    this.props.fetchUser(form, methods.PUT_USER);
+                    this.props.fetchUser(methods.PUT_USER, form);
                 } else {
                     console.log('form invalid')
                 }
@@ -183,8 +177,8 @@ const mapStateToProps = function(store) {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));
         },
-        fetchUser: (userForm, method) => {
-            dispatch(fetchUser(userForm, method));
+        fetchUser: (method, data) => {
+            dispatch(fetchUser(method, data));
         }
     }
 };

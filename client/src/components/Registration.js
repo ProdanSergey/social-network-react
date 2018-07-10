@@ -34,7 +34,7 @@ class RegForm extends React.Component {
       asFormData: true
     });
     if (form) {
-      this.props.fetchUser(form, methods.ADD_USER);
+      this.props.fetchUser(methods.ADD_USER, form);
     } else {
       console.log('form invalid')
     }
@@ -178,8 +178,8 @@ const mapDispatchToProps = (dispatch, state) => {
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
     },
-    fetchUser: (userForm, method) => {
-      dispatch(fetchUser(userForm, method));
+    fetchUser: (method, data) => {
+      dispatch(fetchUser(method, data));
     }
   }
 };

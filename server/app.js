@@ -15,6 +15,7 @@ import appRegRoutes        from './routes/reg.route';
 import appAuthRoutes       from './routes/auth.route';
 import appDataRoutes       from './routes/data.route';
 import appSearchRoutes     from './routes/search.route';
+import appFriendsRoutes     from './routes/friends.route';
 
 var jwtCheck = jwtMiddleware(jwtsecret)
 
@@ -44,10 +45,12 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/reactApp');
 
 SourceMapSupport.install();
+
 app.use('/api/reg', Validation, appRegRoutes);
 app.use('/api/auth', Validation, appAuthRoutes);
 app.use('/api/data', jwtCheck, Validation, appDataRoutes);
 app.use('/api/search', jwtCheck, Validation, appSearchRoutes);
+app.use('/api/friends', jwtCheck, Validation, appFriendsRoutes);
 app.get('/', (req,res) => {
   return res.end('Api working');
 });

@@ -78,7 +78,7 @@ export const userInfo = (req, res) => {
     const { filesIsEmpty} = res.errors;
     const { body, files, method, tokenData: {id} } = req;
     const queryData = filesIsEmpty ? body : {avatar: avatarSlicer(files.image.file)};
-    const query = method === 'POST' ? 
+    const query = method === 'GET' ? 
         User.findById(id) : 
         User.findByIdAndUpdate(id, {$set: queryData}, {new: true})
     query.then(user => {
@@ -89,15 +89,15 @@ export const userInfo = (req, res) => {
                 message: messages.AUTHENTICATION_FAILED
             });
         } else {
-            const { firstName, middleName, lastName, avatar } = user;
+            const { firstName, middleName, lastName, avatar, friends } = user;
             res.status(200).send({
                 authenticated: true,
-                alert: false,
                 message: messages.AUTHENTICATION_SUCCESS,
                 firstName,
                 middleName,
                 lastName,
-                avatar
+                avatar,
+                friends
             });
         }
     })
@@ -111,15 +111,67 @@ export const search = (req, res) => {
         if(!users.length) {
             res.status(200).send({
                 alert: true,
-                search: null,
                 message: messages.SEARCH_RESPONSE_EMPTY
             });
         } else {
             const userFilter = users.map(user => {
-                const { firstName, gender, lastName, avatar, age } = user;
-                return { firstName, gender, lastName, avatar, age }
+                const { _id , firstName, gender, lastName, avatar, age } = user;
+                return { _id, firstName, gender, lastName, avatar, age }
             })
-            res.status(200).send({users: userFilter, search: true})
+            res.status(200).send({users: userFilter})
         }
     })
+    .catch(error => res.status(400).send(error));
+}
+
+export const addOrRemoveFriend = (req, res) => {
+    const { method, body: {friend}, tokenData: {id} } = req;
+    const query = method === 'PUT' ? 
+        User.findByIdAndUpdate(id, {$push: {'friends': friend}}, {new: true}) : 
+        User.findByIdAndDelete(id, {$pull: {'friends': friend}}, {safe: true})
+    query.then(user => {
+        if(!user) {
+            res.status(200).send({
+                authenticated: false,
+                alert: true,
+                message: messages.AUTHENTICATION_FAILED
+            });
+        } else {
+            const { firstName, middleName, lastName, avatar, friends } = user;
+            res.status(200).send({
+                authenticated: true,
+                alert: false,
+                message: messages.AUTHENTICATION_SUCCESS,
+                firstName,
+                middleName,
+                lastName,
+                avatar,
+                friends
+            });
+        }
+    })
+    .catch(error => res.status(400).send(error));
+}
+
+export const getFriends = (req, res) => {
+    const { tokenData: {id} } = req;
+    User.findById(id) 
+    .then(user => {
+        
+        if(!user) {
+            res.status(200).send({
+                message: messages.AUTHENTICATION_FAILED
+            });
+        } else {
+            User.find({'_id': { $in: user.friends}})
+                .then(users => {
+                    return users.map(user => {
+                        const { _id, firstName, middleName, lastName, avatar, age, gender } = user;
+                        return { _id, firstName, middleName, lastName, avatar, age, gender }
+                    })
+                })
+                .then(result => res.status(200).send(result))
+        }
+    })
+    .catch(error => res.status(400).send(error));
 }

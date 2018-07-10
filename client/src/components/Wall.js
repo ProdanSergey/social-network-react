@@ -1,16 +1,9 @@
 import React                 from 'react';
 import { connect }           from 'react-redux';
-import { fetchUser }          from '../actions/user-actions';
 
-import * as methods           from '../constants/fetch';
 import Spinner from '../views/Spinner'
 
 class Wall extends React.Component {
-
-    componentDidMount() {
-        if (!this.props.response.authenticated)
-            this.props.fetchUser(this.props.token, methods.GET_USER);
-    }
 
     render() {
         const { response, fetching } = this.props
@@ -44,14 +37,5 @@ const mapStateToProps = function(store) {
         token: store.tokenState.token
     }
 };
-  
-const mapDispatchToProps = (dispatch, state) => {
-    return {
-        fetchUser: (token, method) => {
-            dispatch(fetchUser(token, method));
-        },
-    }
-};
-  
 
-export default connect(mapStateToProps, mapDispatchToProps)(Wall);
+export default connect(mapStateToProps)(Wall);

@@ -32,7 +32,7 @@ class Login extends React.Component {
             asFormData: false
         });
         if (form) {
-            this.props.fetchUser(form, methods.AUTH_USER);
+            this.props.fetchUser(methods.AUTH_USER, form);
         } else {
             console.log('form invalid')
         }
@@ -112,8 +112,8 @@ const mapDispatchToProps = (dispatch, state) => {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));
         },
-        fetchUser: (userForm, method) => {
-            dispatch(fetchUser(userForm, method));
+        fetchUser: (method, data) => {
+            dispatch(fetchUser(method, data));
         }
     };
 }

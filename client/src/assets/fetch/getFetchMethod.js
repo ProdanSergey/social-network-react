@@ -3,7 +3,9 @@ import {
     getUser, 
     authenticateUser, 
     editUserInformation,
-    searchUsers
+    searchUsers,
+    addFriend,
+    getFriends
   } from './fetchData';
 import * as methods       from '../../constants/fetch';
 
@@ -19,6 +21,10 @@ export const getFetchMethod = payload => {
         return editUserInformation;
       case methods.SEARCH_USERS:
         return searchUsers;
+      case methods.ADD_FRIEND:
+        return addFriend;
+      case methods.GET_FRIENDS:
+        return getFriends;
       default:
         return false;
     }

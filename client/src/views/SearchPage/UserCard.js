@@ -9,12 +9,15 @@ class UserCard extends React.Component {
     render() {
         const {
             user: {
+                _id,
                 firstName,
                 lastName,
                 gender,
                 age,
                 avatar
-            }
+            },
+            isFriend,
+            onUpdate
         } = this.props
         return(
             <div className="card">
@@ -22,8 +25,15 @@ class UserCard extends React.Component {
                     <img src={avatar} alt=""/>
                 </div>
                 <h1 className="card__name">{`${firstName} ${lastName}`}</h1>
-                <p className="card__info"><i className={`icon news ${this.genderIconHandler(gender)}`}></i><span>{age} years</span></p>
-                <div className="card__follow"><i className="icon star-blank"></i></div>
+                <p className="card__info"><i className={`icon ${this.genderIconHandler(gender)}`}></i><span>{age} years</span></p>
+                <div className="card__follow">
+                    <i 
+                        id={_id} 
+                        className={`icon star-${isFriend ? 'filled' : 'blank'}`} 
+                        data-friend={isFriend} 
+                        onClick={onUpdate}>
+                    </i>
+                </div>
             </div>
         ) 
     }

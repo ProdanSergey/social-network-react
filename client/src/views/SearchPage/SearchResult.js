@@ -6,16 +6,21 @@ class SearchResult extends React.Component {
 
     render() {
         const {
-            searchResult: {
-                    search = false,
+            searchResult: {     
+                response: {
                     users
+                },
+                personalInfo: {
+                    friends
+                },
+                ready
             }
         } = this.props
-        if(search === null) return <p className="mb-0">{constants.SEARCH_NOTHING_FOUND}</p>
-        if(search) {
+        if (ready) {
+            if (!users.length) return <p className="mb-0">{constants.SEARCH_NOTHING_FOUND}</p>
             return (
                 <div className="row users">
-                    {users.map((user, index) => <UserCard key={index} user={user}/>)}
+                    {users.map((user) => <UserCard key={user._id} user={user} isFriend={friends.includes(user._id)} onUpdate={this.props.onUpdate}/>)}
                 </div>
             )
         } else {

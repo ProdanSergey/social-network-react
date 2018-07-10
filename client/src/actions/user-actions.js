@@ -16,7 +16,7 @@ export const fetchUserFailure = response => ({
   payload: { response }
 });
 
-export const fetchUser = (data, payload) => {
+export const fetchUser = (payload, data) => {
   return (dispatch, getState) => {
     dispatch(fetchUserBegin());
     return getFetchMethod(payload)(data)

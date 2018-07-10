@@ -19,7 +19,7 @@ const buildRequest = options => {
 export const getUser = () => {
     return buildRequest({
         url: '/api/data',
-        method: methods.POST,
+        method: methods.GET,
     })
 }
 
@@ -32,29 +32,54 @@ export const editUserInformation = data => {
     })
 }
 
-export const addUser = user => {
+export const addUser = data => {
     return buildRequest({
         url: '/api/reg',
         method: methods.POST,
         isFormData: true,
-        data: user
+        data
     })
 }
 
-export const authenticateUser = request => {
+export const authenticateUser = data => {
     return buildRequest({
         url: '/api/auth',
         method: methods.POST,
         isStringify: true,
-        data: request
+        data
     })
 }
 
-export const searchUsers = request => {
+export const searchUsers = data => {
     return buildRequest({
         url: '/api/search',
         method: methods.POST,
         isStringify: true,
-        data: request
+        data
+    })
+}
+
+export const addFriend = data => {
+    return buildRequest({
+        url: '/api/friends',
+        method: methods.PUT,
+        isStringify: true,
+        data
+    })
+}
+
+export const removeFriend = data => {
+    return buildRequest({
+        url: '/api/friends',
+        method: methods.DELETE,
+        isStringify: true,
+        data
+    })
+}
+
+export const getFriends = () => {
+    return buildRequest({
+        url: '/api/friends',
+        method: methods.GET,
     })
 }

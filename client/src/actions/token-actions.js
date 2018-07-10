@@ -1,14 +1,23 @@
 import * as types                  from './action-types';
 import { removeState, saveState }  from '../assets/LocalStorage';
 import { push }                    from 'connected-react-router';
+import { fetchUser }               from '../actions/user-actions';
 
-export const loadTokenToStore = token => ({
+const loadTokenToStore = token => ({
   type: types.LOAD_TOKEN,
   payload: { token }
 });
-export const deleteTokenFromStore = () => ({
+
+const deleteTokenFromStore = () => ({
     type: types.DELETE_TOKEN,
 });
+
+export const relogin = (token, method) => {
+  return dispatch => {
+    dispatch(loadTokenToStore(token));
+    dispatch(fetchUser(token, method));
+  };
+}
 
 export const login = (token) => {
   return dispatch => {

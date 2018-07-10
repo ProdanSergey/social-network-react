@@ -38,11 +38,15 @@ var Schema = mongoose.Schema({
   },
   avatar: {
     type: String
+  },
+  friends: {
+    type: Array,
+    default: []
   }
 });
 
 Schema.pre('save', function(next){
-  var user = this; // User object
+  var user = this;
 
   if (!user.isModified('password')) return next();
   

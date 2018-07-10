@@ -7,7 +7,7 @@ import * as appController from '../controllers/server.controller';
 const router = express.Router();
 
 router.route('/')
-        .post(appController.userInfo)
+        .get(appController.userInfo)
         .put(appController.userInfo)
 
 export default router;
