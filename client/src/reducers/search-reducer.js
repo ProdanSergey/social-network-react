@@ -3,7 +3,8 @@ import * as types from '../actions/action-types';
 const initialState = {
     fetching: false,
     ready: false,
-    response: {}
+    response: {},
+    search: {}
 };
 
 export default function(state = initialState, action) {
@@ -18,7 +19,6 @@ export default function(state = initialState, action) {
             return {
               ...state,
               fetching: false,
-              ready: true,
               response: action.payload.response
             };
       
@@ -27,6 +27,12 @@ export default function(state = initialState, action) {
               ...state,
               fetching: false,
               response: action.payload.response
+            };
+        case types.STORE_SEARCH_RESULT:
+            return {
+              ...state,
+              ready: true,
+              search: action.payload.search,
             };
         default:
             return state;

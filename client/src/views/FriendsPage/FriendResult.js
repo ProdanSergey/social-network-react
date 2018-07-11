@@ -1,18 +1,14 @@
 import React from 'react';
 import * as constants from '../../constants/global';
-import UserCard from './UserCard';
+import UserCard from '../SearchPage/UserCard';
 
-class SearchResult extends React.Component {
-
-    componentDidMount() {
-        console.log(this)
-    }
+class FriendResult extends React.Component {
 
     render() {
         const {
-            searchResult: {     
+            friendsResult: {     
                 ready,
-                search: {
+                friends: {
                     users
                 },
                 user: {
@@ -20,6 +16,7 @@ class SearchResult extends React.Component {
                 }
             }
         } = this.props
+        console.log(this.props)
         if (ready) {
             if (!users.length) return <p className="mb-0">{constants.SEARCH_NOTHING_FOUND}</p>
             return (
@@ -35,4 +32,4 @@ class SearchResult extends React.Component {
 
 }
 
-export default SearchResult
+export default FriendResult

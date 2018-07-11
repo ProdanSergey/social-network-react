@@ -29,12 +29,20 @@ export const registration = (req,res) => {
         } else {
             const token = jwt.sign({ id: newUser._id }, jwtsecret, { expiresIn: 86400 });
             newUser.save().then(item => {
+                const { firstName, middleName, lastName, avatar, friends } = item
                 res.status(200).send({
                     response: {
                         registered: true,
                         alert: true,
                         message: messages.USER_CREATE_SUCCESS,
                         password
+                    },
+                    user: {
+                        firstName,
+                        middleName,
+                        lastName,
+                        avatar,
+                        friends
                     },
                     token,
                 });
@@ -48,6 +56,7 @@ export const login = (req, res) => {
     const {email, password} = req.body
     User.findOne({email})
     .then(user => {
+        const { _id, firstName, middleName, lastName, avatar, friends } = user
         if (!user) {
             res.status(200).send({
                 response: {
@@ -60,12 +69,19 @@ export const login = (req, res) => {
             const hash = user.password;
             bcrypt.compare(password, hash, function(err, result) {
                 if (result) {
-                    const token = jwt.sign({ id: user._id }, jwtsecret, { expiresIn: 86400 });
+                    const token = jwt.sign({ id: _id }, jwtsecret, { expiresIn: 86400 });
                     res.status(200).send({
                         response: {
                             authorized: true,
                             alert: false,
                             message: messages.USER_LOGIN_SUCCESS
+                        },
+                        user : {
+                            firstName,
+                            middleName,
+                            lastName,
+                            avatar,
+                            friends
                         },
                         token
                     });
@@ -126,15 +142,27 @@ export const search = (req, res) => {
     .then(users => {
         if(!users.length) {
             res.status(200).send({
-                alert: true,
-                message: messages.SEARCH_RESPONSE_EMPTY
+                response: {
+                    result: false,
+                    message: messages.SEARCH_RESPONSE_EMPTY
+                },
+                search: {
+                    users: []
+                }
             });
         } else {
             const userFilter = users.map(user => {
                 const { _id , firstName, gender, lastName, avatar, age } = user;
                 return { _id, firstName, gender, lastName, avatar, age }
             })
-            res.status(200).send({users: userFilter})
+            res.status(200).send({
+                response: {
+                    result: true,
+                },
+                search: {
+                    users: userFilter
+                }
+            });
         }
     })
     .catch(error => res.status(400).send(error));
@@ -183,17 +211,30 @@ export const getFriends = (req, res) => {
     .then(user => {
         if(!user) {
             res.status(200).send({
-                message: messages.AUTHENTICATION_FAILED
+                response: {
+                    result: false,
+                    message: messages.AUTHENTICATION_FAILED
+                },
+                friends: {
+                    users: []
+                }
             });
         } else {
             User.find({'_id': { $in: user.friends}})
-                .then(users => {
-                    return users.map(user => {
-                        const { _id, firstName, middleName, lastName, avatar, age, gender } = user;
-                        return { _id, firstName, middleName, lastName, avatar, age, gender }
-                    })
+            .then(users => {
+                return users.map(user => {
+                    const { _id, firstName, middleName, lastName, avatar, age, gender } = user;
+                    return { _id, firstName, middleName, lastName, avatar, age, gender }
                 })
-                .then(result => res.status(200).send(result))
+            })
+            .then(result => res.status(200).send({
+                response: {
+                    result: true,
+                },
+                friends: {
+                    users: result
+                }
+            }))
         }
     })
     .catch(error => res.status(400).send(error));

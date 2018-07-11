@@ -1,29 +1,34 @@
 import * as types             from './action-types';
 import { getFetchMethod }     from '../assets/fetch/getFetchMethod';
+import { getFetchResponse }   from '../assets/fetch/getFetchResponse';
 
-export const fetchSearchBegin = () => ({
+const fetchSearchBegin = () => ({
   type: types.FETCH_SEARCH_BEGIN
 });
 
-export const fetchSearchSuccess = response => ({
+const fetchSearchSuccess = response => ({
   type: types.FETCH_SEARCH_SUCCESS,
   payload: { response }
 });
 
-export const fetchSearchFailure = response => ({
+const fetchSearchFailure = response => ({
   type: types.FETCH_SEARCH_FAILURE,
   payload: { response }
+});
+
+export const storeSearchResult = (search) => ({
+  type: types.STORE_SEARCH_RESULT,
+  payload: { search }
 });
 
 export const fetchSearch = (payload, data) => {
   return dispatch => {
     dispatch(fetchSearchBegin());
     return getFetchMethod(payload)(data)
-    .then(res => {
-      dispatch(fetchSearchSuccess(res));
-      return res;
-    })
-    .catch(error => dispatch(fetchSearchFailure(error)));
+      .then(res => getFetchResponse(dispatch, res))
+      .then(response => dispatch(fetchSearchSuccess(response)))
+      .catch(error => dispatch(fetchSearchFailure(error)))
   };
 }
+
 

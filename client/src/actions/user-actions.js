@@ -6,7 +6,7 @@ const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
 });
 
-export const fetchUserSuccess = response => ({
+const fetchUserSuccess = response => ({
   type: types.FETCH_USER_SUCCESS,
   payload: { response }
 });
@@ -21,13 +21,22 @@ export const storeUser = (user) => ({
   payload: { user }
 });
 
+export const loginUser = () => ({
+  type: types.LOGIN_USER,
+});
+
+export const logoutUser = () => ({
+  type: types.LOGOUT_USER,
+});
+
+
 export const fetchUser = (payload, data) => {
-  console.log(payload, data)
   return dispatch => {
     dispatch(fetchUserBegin());
     return getFetchMethod(payload)(data)
-    .then(res => getFetchResponse(dispatch, res))
-    .catch(error => dispatch(fetchUserFailure(error)));
+      .then(res => getFetchResponse(dispatch, res))
+      .then(response => dispatch(fetchUserSuccess(response)))
+      .catch(error => dispatch(fetchUserFailure(error)))
   };
 }
 

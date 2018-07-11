@@ -3,6 +3,7 @@ import * as types from '../actions/action-types';
 const initialState = {
     fetching: false,
     ready: false,
+    isLogin: false,
     response: {},
     user: {}
 };
@@ -32,6 +33,16 @@ export default function(state = initialState, action) {
               ...state,
               ready: true,
               user: action.payload.user,
+            };
+        case types.LOGIN_USER:
+            return {
+              ...state,
+              isLogin: true,
+            };
+        case types.LOGOUT_USER:
+            return {
+              ...state,
+              isLogin: false,
             };
         default:
             return state;

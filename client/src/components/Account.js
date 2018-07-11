@@ -64,7 +64,7 @@ class Account extends React.Component {
             if (type !== 'file') {
                 setTimeout(() => {
                     this.setState({ switchers: {...switchers, [name]: !switchers[name]} })
-                }, 250)
+                }, 100)
             }
         }
         event.preventDefault();

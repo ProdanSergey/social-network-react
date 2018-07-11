@@ -3,7 +3,9 @@ import React from 'react';
 class Welcome extends React.Component {
     render(){
       return (
-        <div>Welcome</div>
+        <div className="col-11">
+          <div>Welcome</div>
+        </div>
       )
     }
   }

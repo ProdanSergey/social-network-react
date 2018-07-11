@@ -1,9 +1,11 @@
-import { login }      from '../../actions/token-actions';
 import { 
     storeUser,
-    fetchUserSuccess
-}                     from '../../actions/user-actions';
-import { push }       from 'connected-react-router';
+    loginUser }               from '../../actions/user-actions';
+import { storeSearchResult }  from '../../actions/search-actions';
+import { storeFriendsResult } from '../../actions/friends-actions';
+import { push }               from 'connected-react-router';
+
+import { saveState }          from '../LocalStorage';
 
 export const getFetchResponse = (dispatch, res) => {
     const { 
@@ -14,15 +16,20 @@ export const getFetchResponse = (dispatch, res) => {
             authenticated
         },
         token, 
-        user
-    } = res
-    if(authorized || registered) {
-        dispatch(login(token));
-        dispatch(push('/'));
+        user,
+        search,
+        friends
+    } = res;
+    if (user) dispatch(storeUser(user));
+    if (search) dispatch(storeSearchResult(search));
+    if (friends) dispatch(storeFriendsResult(friends));
+    if (token) {
+            saveState(token);
+            dispatch(loginUser());
+            dispatch(push('/'));
     }
-    if(authenticated) {
-        dispatch(storeUser(user));
+    if (authenticated) {
+        dispatch(loginUser());
     }
-    dispatch(fetchUserSuccess(response));
-    return res;
+    return response;
 }

@@ -2,7 +2,7 @@ import React                        from 'react';
 import { Switch, Route, Redirect }  from 'react-router-dom';
 import { loadState }                from '../assets/LocalStorage';
 
-import Home               from './Home';
+import Wall               from './Wall';
 import Login              from './Login';
 import Registration       from './Registration';
 
@@ -29,7 +29,7 @@ class Main extends React.Component {
   render(){
     return(
     <Switch>
-      <Route exact path='/' component={Home}/>;
+      <AuthenticatedRoute exact path='/' component={Wall}/>;
       <Route path='/login' component={Login}/>;
       <Route path='/registration' component={Registration}/>;
       <AuthenticatedRoute path='/account' component={Account}/>;

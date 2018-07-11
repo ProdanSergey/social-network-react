@@ -40,10 +40,8 @@ class Search extends React.Component {
             }
             if(tagName === 'I') {
                 if(dataset.friend == 'true') {
-                    console.log(dataset.friend)
                     this.props.fetchUser(methods.REMOVE_FRIEND, {friend: id})
                 } else {
-                    console.log(dataset.friend)
                     this.props.fetchUser(methods.ADD_FRIEND, {friend: id})
                 }
             }     
@@ -55,7 +53,8 @@ class Search extends React.Component {
             form,
             ready,
             response,
-            user
+            user,
+            search
         } = this.props
         const inputOptions = {
             autofocus: false,
@@ -92,7 +91,7 @@ class Search extends React.Component {
                 </div>
                 <div className="row searchpage no-gutters">
                     <section className="col searchpage__result">    
-                        <SearchResult searchResult={{response, user, ready}} onUpdate={this.onUpdate}/>
+                        <SearchResult searchResult={{response, search, user, ready}} onUpdate={this.onUpdate}/>
                     </section>
                 </div>
             </div>
@@ -107,6 +106,7 @@ const mapStateToProps = function(store) {
         ready:        store.searchData.ready,
         fetching:     store.searchData.fetching,
         response:     store.searchData.response,
+        search:       store.searchData.search,
         user:         store.userData.user
     }
 };

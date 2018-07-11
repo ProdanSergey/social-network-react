@@ -5,6 +5,7 @@ import { createSelectItems }  from '../assets/createSelectItems';
 
 import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
+import { push }               from 'connected-react-router';
 
 import * as methods           from '../constants/fetch';
 import * as constants         from '../constants/global';
@@ -168,8 +169,9 @@ class RegForm extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-    form:  store.formData.form,
-    fetching: store.userData.fetching
+    form:      store.formData.form,
+    fetching:  store.userData.fetching,
+    userReady: store.userData.ready
   }
 };
 

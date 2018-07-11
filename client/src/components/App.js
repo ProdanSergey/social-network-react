@@ -1,13 +1,14 @@
-import React        from 'react';
-import { connect }  from 'react-redux';
+import React          from 'react';
+import { connect }    from 'react-redux';
 import { withRouter } from 'react-router';
-import Navigation   from './Navigation';
-import Main         from './Main';
-import Sidebar      from './Sidebar';
-import MessageBox   from './MessageBox';
+import Navigation     from './Navigation';
+import Main           from './Main';
+import Sidebar        from './Sidebar';
+import MessageBox     from './MessageBox';
 
-import { loadState }          from '../assets/LocalStorage';
-import { relogin }            from '../actions/token-actions';
+import { loadTokenToStore } from '../actions/token-actions';
+import { fetchUser, loginUser }        from '../actions/user-actions';
+import { loadState }        from '../assets/LocalStorage';
 
 import * as methods           from '../constants/fetch';
 
@@ -17,8 +18,14 @@ import '../css/index.css';
 class App extends React.Component {
 
   componentDidMount() {
-    const userState = loadState();
-    if (userState) this.props.relogin(methods.GET_USER, userState);
+    const { isLogin, fetchUser, loadTokenToStore } = this.props
+    const userToken = loadState();
+    if (userToken) {
+      loadTokenToStore(userToken)
+      if(!isLogin) {
+        fetchUser(methods.GET_USER)
+      }
+    }
   }
 
   render(){
@@ -33,15 +40,22 @@ class App extends React.Component {
   }
 }
 
+
+
 const mapStateToProps = function(store) {
   return {
+    token:   store.tokenState.token,
+    isLogin: store.userData.isLogin
   }
 };
 
 const mapDispatchToProps = (dispatch, state) => {
   return {
-    relogin: (method, data) => {
-      dispatch(relogin(method, data));
+    loadTokenToStore: token => {
+      dispatch(loadTokenToStore(token));
+    },
+    fetchUser: (method, data) => {
+      dispatch(fetchUser(method, data));
     }
   }
 };

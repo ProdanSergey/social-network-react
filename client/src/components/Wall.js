@@ -2,6 +2,7 @@ import React                 from 'react';
 import { connect }           from 'react-redux';
 
 import Spinner from '../views/Spinner'
+import Welcome        from '../components/Welcome';
 
 class Wall extends React.Component {
 
@@ -12,27 +13,31 @@ class Wall extends React.Component {
                 firstName,
                 lastName
             },
-            fetching 
+            fetching,
+            isLogin
         } = this.props
         if (fetching) return <Spinner/>
         return(
-            <div className="row wallpage no-gutters">
-                <section className=" col wallpage__header p-0">
-                    <div className="image"><img src="/mount.jpeg" alt=""/></div>
-                    <div className="menu">
-                    <div className="user">
-                        <div className="user__pic">
-                        <img src={avatar}
-                        alt="user avatar"/>
+            <div className="col-11">
+                <div className="row wallpage no-gutters">
+                    <section className=" col wallpage__header p-0">
+                        <div className="image"><img src="/mount.jpeg" alt=""/></div>
+                        <div className="menu">
+                        <div className="user">
+                            <div className="user__pic">
+                            <img src={avatar}
+                            alt="user avatar"/>
+                            </div>
+                            <div className="user__name">
+                            <h2>{firstName +' '+ lastName}</h2>
+                            </div>
                         </div>
-                        <div className="user__name">
-                        <h2>{firstName +' '+ lastName}</h2>
-                        </div>
-                    </div>
-                    </div> 
-                </section>
+                        </div> 
+                    </section>
+                </div>
             </div>
         )
+
     }
 
 }
@@ -40,7 +45,8 @@ class Wall extends React.Component {
 const mapStateToProps = function(store) {
     return {
         fetching: store.userData.fetching,
-        user:     store.userData.user
+        user:     store.userData.user,
+        isLogin:  store.userData.isLogin
     }
 };
 

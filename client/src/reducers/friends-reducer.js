@@ -3,7 +3,8 @@ import * as types from '../actions/action-types';
 const initialState = {
     fetching: false,
     ready: false,
-    response: {}
+    response: {},
+    friends: {}
 };
 
 export default function(state = initialState, action) {
@@ -18,7 +19,6 @@ export default function(state = initialState, action) {
             return {
               ...state,
               fetching: false,
-              ready: true,
               response: action.payload.response
             };
       
@@ -27,6 +27,12 @@ export default function(state = initialState, action) {
               ...state,
               fetching: false,
               response: action.payload.response
+            };
+        case types.STORE_FRIENDS_RESULT:
+            return {
+              ...state,
+              ready: true,
+              friends: action.payload.friends,
             };
         default:
             return state;
