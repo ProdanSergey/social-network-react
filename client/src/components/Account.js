@@ -31,12 +31,6 @@ class Account extends React.Component {
         this.onUpdate = this.onUpdate.bind(this);
     }
 
-    componentDidMount() {
-        const { fetchUser, response: {authenticated} } = this.props;
-        if (!authenticated)
-            fetchUser(null, methods.GET_USER);
-    }
-
     onUpdate(event) {
         let { value, name, type, tagName, dataset, files } = event.target;
         const { switchers } = this.state;
@@ -57,7 +51,7 @@ class Account extends React.Component {
                     asFormData: true
                 });
                 if (form) {
-                    this.props.fetchUser(form, methods.PUT_USER);
+                    this.props.fetchUser(methods.PUT_USER, form);
                 } else {
                     console.log('form invalid')
                 }
@@ -70,7 +64,7 @@ class Account extends React.Component {
             if (type !== 'file') {
                 setTimeout(() => {
                     this.setState({ switchers: {...switchers, [name]: !switchers[name]} })
-                }, 250)
+                }, 100)
             }
         }
         event.preventDefault();
@@ -83,7 +77,7 @@ class Account extends React.Component {
     render() {
         const {
             fetching,
-            response: {
+            user: {
                 firstName,
                 middleName,
                 lastName,
@@ -174,17 +168,17 @@ const mapStateToProps = function(store) {
     return {
         form:      store.formData.form,
         fetching:  store.userData.fetching,
-        response:  store.userData.response,
+        user:      store.userData.user,
     }
 };
   
-  const mapDispatchToProps = (dispatch, state) => {
+const mapDispatchToProps = (dispatch, state) => {
     return {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));
         },
-        fetchUser: (userForm, method) => {
-            dispatch(fetchUser(userForm, method));
+        fetchUser: (method, data) => {
+            dispatch(fetchUser(method, data));
         }
     }
 };

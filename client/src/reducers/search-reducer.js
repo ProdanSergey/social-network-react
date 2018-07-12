@@ -3,46 +3,36 @@ import * as types from '../actions/action-types';
 const initialState = {
     fetching: false,
     ready: false,
-    isLogin: false,
     response: {},
-    user: {}
+    search: {}
 };
 
 export default function(state = initialState, action) {
     switch(action.type) {
-        case types.FETCH_USER_BEGIN:
+        case types.FETCH_SEARCH_BEGIN:
             return {
               ...state,
               fetching: true,
             };
-        case types.FETCH_USER_SUCCESS:
+      
+        case types.FETCH_SEARCH_SUCCESS:
             return {
               ...state,
               fetching: false,
               response: action.payload.response
             };
       
-        case types.FETCH_USER_FAILURE:
+        case types.FETCH_SEARCH_FAILURE:
             return {
               ...state,
               fetching: false,
               response: action.payload.response
             };
-        case types.STORE_USER:
+        case types.STORE_SEARCH_RESULT:
             return {
               ...state,
               ready: true,
-              user: action.payload.user,
-            };
-        case types.LOGIN_USER:
-            return {
-              ...state,
-              isLogin: true,
-            };
-        case types.LOGOUT_USER:
-            return {
-              ...state,
-              isLogin: false,
+              search: action.payload.search,
             };
         default:
             return state;

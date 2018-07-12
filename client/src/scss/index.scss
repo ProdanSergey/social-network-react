@@ -149,16 +149,17 @@ h1, h2, h3 {
             }
         }
     }
-    .searchpage {
+    .searchpage, .friendspage {
         .users {
             display: flex;
             flex-wrap: wrap;
             padding: 1rem;
         }
-        .card {
+        .usercard {
             position: relative;
-            flex: 0 0 45%;
+            flex: 1;
             display: flex;
+            flex-direction: column;
             margin: 1rem;
             padding: 1rem;
             justify-content: center;
@@ -198,9 +199,7 @@ h1, h2, h3 {
             }
         }
     }
-    .friendspage {
-        
-    }
+
     .spinner {
         display: flex;
         justify-content: center;

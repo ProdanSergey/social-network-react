@@ -1,9 +1,12 @@
 import React                  from 'react';
 import { connect }            from 'react-redux';
 import { validateForm }       from '../assets/validateForm';
-import { storeFieldData }     from '../actions/form-actions';
 
+import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
+import { fetchSearch }        from '../actions/search-actions';
+
+
 import * as methods           from '../constants/fetch';
 import * as constants         from '../constants/global';
 
@@ -19,7 +22,7 @@ class Search extends React.Component {
     }
 
     onUpdate(event) {
-        let { value, name, type, tagName } = event.target;
+        let { value, name, id, type, tagName, dataset } = event.target;
         if (event.type === 'change') {
             this.props.storeFieldData(name, type, value);
         }
@@ -30,18 +33,28 @@ class Search extends React.Component {
                     asFormData: false
                 });
                 if (form) {
-                    this.props.fetchUser(form, methods.SEARCH_USERS);
+                    this.props.fetchSearch(methods.SEARCH_USERS, form);
                 } else {
                     console.log('form invalid')
                 }
             }
+            if(tagName === 'I') {
+                if(dataset.friend == 'true') {
+                    this.props.fetchUser(methods.REMOVE_FRIEND, {friend: id})
+                } else {
+                    this.props.fetchUser(methods.ADD_FRIEND, {friend: id})
+                }
+            }     
         }
     }
     
     render() {
         const {
             form,
-            response = false
+            ready,
+            response,
+            user,
+            search
         } = this.props
         const inputOptions = {
             autofocus: false,
@@ -78,7 +91,7 @@ class Search extends React.Component {
                 </div>
                 <div className="row searchpage no-gutters">
                     <section className="col searchpage__result">    
-                        <SearchResult searchResult={response}/>
+                        <SearchResult searchResult={{response, search, user, ready}} onUpdate={this.onUpdate}/>
                     </section>
                 </div>
             </div>
@@ -89,9 +102,12 @@ class Search extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        form:      store.formData.form,
-        fetching:  store.userData.fetching,
-        response:  store.userData.response,
+        form:         store.formData.form,
+        ready:        store.searchData.ready,
+        fetching:     store.searchData.fetching,
+        response:     store.searchData.response,
+        search:       store.searchData.search,
+        user:         store.userData.user
     }
 };
   
@@ -100,8 +116,11 @@ const mapStateToProps = function(store) {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));
         },
-        fetchUser: (userForm, method) => {
-            dispatch(fetchUser(userForm, method));
+        fetchSearch: (method, data) => {
+            dispatch(fetchSearch (method, data));
+        },
+        fetchUser: (method, data) => {
+            dispatch(fetchUser (method, data));
         }
     }
 };

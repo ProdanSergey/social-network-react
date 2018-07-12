@@ -1,6 +1,10 @@
 import * as types from '../actions/action-types';
 
-export default function tokenReducer(state = {}, action) {
+const initialState = {
+    token: null
+}
+
+export default function(state = initialState, action) {
     switch(action.type) {
         case types.LOAD_TOKEN:
             return { 

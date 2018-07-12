@@ -1,38 +1,43 @@
 import React                 from 'react';
 import { connect }           from 'react-redux';
-import { fetchUser }          from '../actions/user-actions';
 
-import * as methods           from '../constants/fetch';
 import Spinner from '../views/Spinner'
+import Welcome        from '../components/Welcome';
 
 class Wall extends React.Component {
 
-    componentDidMount() {
-        if (!this.props.response.authenticated)
-            this.props.fetchUser(this.props.token, methods.GET_USER);
-    }
-
     render() {
-        const { response, fetching } = this.props
+        const { 
+            user: {
+                avatar,
+                firstName,
+                lastName
+            },
+            fetching,
+            isLogin
+        } = this.props
         if (fetching) return <Spinner/>
         return(
-            <div className="row wallpage no-gutters">
-                <section className=" col wallpage__header p-0">
-                    <div className="image"><img src="/mount.jpeg" alt=""/></div>
-                    <div className="menu">
-                    <div className="user">
-                        <div className="user__pic">
-                        <img src={response.avatar}
-                        alt="user avatar"/>
+            <div className="col-11">
+                <div className="row wallpage no-gutters">
+                    <section className=" col wallpage__header p-0">
+                        <div className="image"><img src="/mount.jpeg" alt=""/></div>
+                        <div className="menu">
+                        <div className="user">
+                            <div className="user__pic">
+                            <img src={avatar}
+                            alt="user avatar"/>
+                            </div>
+                            <div className="user__name">
+                            <h2>{firstName +' '+ lastName}</h2>
+                            </div>
                         </div>
-                        <div className="user__name">
-                        <h2>{response.firstName +' '+ response.lastName}</h2>
-                        </div>
-                    </div>
-                    </div> 
-                </section>
+                        </div> 
+                    </section>
+                </div>
             </div>
         )
+
     }
 
 }
@@ -40,18 +45,9 @@ class Wall extends React.Component {
 const mapStateToProps = function(store) {
     return {
         fetching: store.userData.fetching,
-        response: store.userData.response,
-        token: store.tokenState.token
+        user:     store.userData.user,
+        isLogin:  store.userData.isLogin
     }
 };
-  
-const mapDispatchToProps = (dispatch, state) => {
-    return {
-        fetchUser: (token, method) => {
-            dispatch(fetchUser(token, method));
-        },
-    }
-};
-  
 
-export default connect(mapStateToProps, mapDispatchToProps)(Wall);
+export default connect(mapStateToProps)(Wall);

@@ -5,6 +5,7 @@ import { createSelectItems }  from '../assets/createSelectItems';
 
 import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
+import { push }               from 'connected-react-router';
 
 import * as methods           from '../constants/fetch';
 import * as constants         from '../constants/global';
@@ -34,7 +35,7 @@ class RegForm extends React.Component {
       asFormData: true
     });
     if (form) {
-      this.props.fetchUser(form, methods.ADD_USER);
+      this.props.fetchUser(methods.ADD_USER, form);
     } else {
       console.log('form invalid')
     }
@@ -168,8 +169,9 @@ class RegForm extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-    form:  store.formData.form,
-    fetching: store.userData.fetching
+    form:      store.formData.form,
+    fetching:  store.userData.fetching,
+    userReady: store.userData.ready
   }
 };
 
@@ -178,8 +180,8 @@ const mapDispatchToProps = (dispatch, state) => {
     storeFieldData: (name, value, flag) => {
       dispatch(storeFieldData(name, value, flag));
     },
-    fetchUser: (userForm, method) => {
-      dispatch(fetchUser(userForm, method));
+    fetchUser: (method, data) => {
+      dispatch(fetchUser(method, data));
     }
   }
 };

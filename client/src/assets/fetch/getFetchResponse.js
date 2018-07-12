@@ -1,17 +1,34 @@
-import { login }            from '../../actions/token-actions';
-import { clearFormData }    from '../../actions/form-actions';
-import { isEmpty }          from '../utils/isEmpty';
-import { push }    from 'connected-react-router';
+import { 
+    storeUser,
+    loginUser }               from '../../actions/user-actions';
+import { storeSearchResult }  from '../../actions/search-actions';
+import { storeFriendsResult } from '../../actions/friends-actions';
+import { showMessage }        from '../../actions/message-action';
+import { push }               from 'connected-react-router';
 
-export const getFetchResponse = (dispatch, getState, res) => {
-    const { authorized, registered, token} = res
-    const { form } = getState().formData
-    if(authorized || registered) {
-        dispatch(login(token));
-        dispatch(push('/'));
+import { saveState }          from '../LocalStorage';
+
+export const getFetchResponse = (dispatch, res) => {
+    const { 
+        response,
+        response: {
+            authenticated,
+            alert
+        },
+        token, 
+        user,
+        search,
+        friends
+    } = res;
+    if (alert) dispatch(showMessage(response));
+    if (user) dispatch(storeUser(user));
+    if (search) dispatch(storeSearchResult(search));
+    if (friends) dispatch(storeFriendsResult(friends));
+    if (token) {
+            saveState(token);
+            dispatch(loginUser());
+            dispatch(push('/'));
     }
-    if(!isEmpty(form)) {
-        dispatch(clearFormData());
-    }
-    return res;
+    if (authenticated) dispatch(loginUser());
+    return response;
 }

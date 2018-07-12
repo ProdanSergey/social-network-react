@@ -1,18 +1,14 @@
 import React from 'react';
 import * as constants from '../../constants/global';
-import UserCard from './UserCard';
+import UserCard from '../SearchPage/UserCard';
 
-class SearchResult extends React.Component {
-
-    componentDidMount() {
-        console.log(this)
-    }
+class FriendResult extends React.Component {
 
     render() {
         const {
-            searchResult: {     
+            friendsResult: {     
                 ready,
-                search: {
+                friends: {
                     users
                 },
                 user: {
@@ -35,4 +31,4 @@ class SearchResult extends React.Component {
 
 }
 
-export default SearchResult
+export default FriendResult

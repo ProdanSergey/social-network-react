@@ -20,19 +20,31 @@ export const registration = (req,res) => {
     .then(user => {
         if (user) {
             res.status(200).send({
-                registered: false,
-                alert: true,
-                message: messages.EMAIL_DUPLICATE
+                response: {
+                    registered: false,
+                    alert: true,
+                    message: messages.EMAIL_DUPLICATE
+                }
             });
         } else {
             const token = jwt.sign({ id: newUser._id }, jwtsecret, { expiresIn: 86400 });
             newUser.save().then(item => {
+                const { firstName, middleName, lastName, avatar, friends } = item
                 res.status(200).send({
-                    registered: true,
-                    alert: true,
+                    response: {
+                        registered: true,
+                        alert: true,
+                        message: messages.USER_CREATE_SUCCESS,
+                        password
+                    },
+                    user: {
+                        firstName,
+                        middleName,
+                        lastName,
+                        avatar,
+                        friends
+                    },
                     token,
-                    message: messages.USER_CREATE_SUCCESS,
-                    password
                 });
             })
         }
@@ -44,28 +56,42 @@ export const login = (req, res) => {
     const {email, password} = req.body
     User.findOne({email})
     .then(user => {
+        const { _id, firstName, middleName, lastName, avatar, friends } = user
         if (!user) {
             res.status(200).send({
-                authorized: false,
-                alert: true,
-                message: messages.USER_DOES_NOT_EXIST,
+                response: {
+                    authorized: false,
+                    alert: true,
+                    message: messages.USER_DOES_NOT_EXIST,
+                }
             });
         } else {
             const hash = user.password;
             bcrypt.compare(password, hash, function(err, result) {
                 if (result) {
-                    const token = jwt.sign({ id: user._id }, jwtsecret, { expiresIn: 86400 });
+                    const token = jwt.sign({ id: _id }, jwtsecret, { expiresIn: 86400 });
                     res.status(200).send({
-                        authorized: true,
-                        alert: false,
-                        token,
-                        message: messages.USER_LOGIN_SUCCESS
+                        response: {
+                            authorized: true,
+                            alert: false,
+                            message: messages.USER_LOGIN_SUCCESS
+                        },
+                        user : {
+                            firstName,
+                            middleName,
+                            lastName,
+                            avatar,
+                            friends
+                        },
+                        token
                     });
                 } else {
                     res.status(200).send({
-                        authorized: false,
-                        alert: true,
-                        message: messages.AUTHORIZATION_FAILED
+                        response: {
+                            authorized: false,
+                            alert: true,
+                            message: messages.AUTHORIZATION_FAILED
+                        }
                     });
                 }
             });
@@ -78,26 +104,32 @@ export const userInfo = (req, res) => {
     const { filesIsEmpty} = res.errors;
     const { body, files, method, tokenData: {id} } = req;
     const queryData = filesIsEmpty ? body : {avatar: avatarSlicer(files.image.file)};
-    const query = method === 'POST' ? 
+    const query = method === 'GET' ? 
         User.findById(id) : 
         User.findByIdAndUpdate(id, {$set: queryData}, {new: true})
     query.then(user => {
         if(!user) {
             res.status(200).send({
-                authenticated: false,
-                alert: true,
-                message: messages.AUTHENTICATION_FAILED
+                response: {
+                    authenticated: false,
+                    alert: true,
+                    message: messages.AUTHENTICATION_FAILED
+                }
             });
         } else {
-            const { firstName, middleName, lastName, avatar } = user;
+            const { firstName, middleName, lastName, avatar, friends } = user;
             res.status(200).send({
-                authenticated: true,
-                alert: false,
-                message: messages.AUTHENTICATION_SUCCESS,
-                firstName,
-                middleName,
-                lastName,
-                avatar
+                response: {
+                    authenticated: true,
+                    message: messages.AUTHENTICATION_SUCCESS
+                },
+                user: {
+                    firstName,
+                    middleName,
+                    lastName,
+                    avatar,
+                    friends
+                }
             });
         }
     })
@@ -110,16 +142,100 @@ export const search = (req, res) => {
     .then(users => {
         if(!users.length) {
             res.status(200).send({
-                alert: true,
-                search: null,
-                message: messages.SEARCH_RESPONSE_EMPTY
+                response: {
+                    result: false,
+                    message: messages.SEARCH_RESPONSE_EMPTY
+                },
+                search: {
+                    users: []
+                }
             });
         } else {
             const userFilter = users.map(user => {
-                const { firstName, gender, lastName, avatar, age } = user;
-                return { firstName, gender, lastName, avatar, age }
+                const { _id , firstName, gender, lastName, avatar, age } = user;
+                return { _id, firstName, gender, lastName, avatar, age }
             })
-            res.status(200).send({users: userFilter, search: true})
+            res.status(200).send({
+                response: {
+                    result: true,
+                },
+                search: {
+                    users: userFilter
+                }
+            });
         }
     })
+    .catch(error => res.status(400).send(error));
+}
+
+export const addOrRemoveFriend = (req, res) => {
+    const { method, body: {friend}, tokenData: {id} } = req;
+    console.log(method)
+    const query = method === 'PUT' ? 
+        {$push: {'friends': friend}} : 
+        {$pull: {'friends': friend}}
+    User.findByIdAndUpdate(id, query, {new: true}) 
+    .then(user => {
+        if(!user) {
+            res.status(200).send({
+                response: {
+                    authenticated: false,
+                    alert: true,
+                    message: messages.AUTHENTICATION_FAILED
+                }
+            });
+        } else {
+            const { firstName, middleName, lastName, avatar, friends } = user;
+            res.status(200).send({
+                response: {
+                    authenticated: true,
+                    alert: false,
+                    message: messages.AUTHENTICATION_SUCCESS
+                },
+                user: {
+                    firstName,
+                    middleName,
+                    lastName,
+                    avatar,
+                    friends
+                }
+            });
+        }
+    })
+    .catch(error => res.status(400).send(error));
+}
+
+export const getFriends = (req, res) => {
+    const { tokenData: {id} } = req;
+    User.findById(id) 
+    .then(user => {
+        if(!user) {
+            res.status(200).send({
+                response: {
+                    result: false,
+                    message: messages.AUTHENTICATION_FAILED
+                },
+                friends: {
+                    users: []
+                }
+            });
+        } else {
+            User.find({'_id': { $in: user.friends}})
+            .then(users => {
+                return users.map(user => {
+                    const { _id, firstName, middleName, lastName, avatar, age, gender } = user;
+                    return { _id, firstName, middleName, lastName, avatar, age, gender }
+                })
+            })
+            .then(result => res.status(200).send({
+                response: {
+                    result: true,
+                },
+                friends: {
+                    users: result
+                }
+            }))
+        }
+    })
+    .catch(error => res.status(400).send(error));
 }
