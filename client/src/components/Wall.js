@@ -1,8 +1,7 @@
 import React                 from 'react';
 import { connect }           from 'react-redux';
 
-import Spinner from '../views/Spinner'
-import Welcome        from '../components/Welcome';
+import Spinner from '../views/Spinner';
 
 class Wall extends React.Component {
 
@@ -13,8 +12,7 @@ class Wall extends React.Component {
                 firstName,
                 lastName
             },
-            fetching,
-            isLogin
+            fetching
         } = this.props
         if (fetching) return <Spinner/>
         return(

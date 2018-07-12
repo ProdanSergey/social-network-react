@@ -1,15 +1,14 @@
 .input-wrapper {
     position: relative;
     display: flex;
+    margin-bottom: 1rem;
     .input-button {
-        
+        button {
+            height: 100%;
+        }
     }
     .input-field {
         width: 100%;
-        margin-bottom: 1rem;
-        input[type=file] {
-            // display: none;
-        }
     }
 }
 

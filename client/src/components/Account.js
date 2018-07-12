@@ -6,6 +6,7 @@ import { parseUploadFile }    from '../assets/parseUploadFile';
 
 import { storeFieldData }     from '../actions/form-actions';
 import { fetchUser }          from '../actions/user-actions';
+import { clearFormData }      from '../actions/form-actions';
 
 import * as methods           from '../constants/fetch';
 import * as constants         from '../constants/global';
@@ -34,24 +35,26 @@ class Account extends React.Component {
     onUpdate(event) {
         let { value, name, type, tagName, dataset, files } = event.target;
         const { switchers } = this.state;
+        const { storeFieldData, fetchUser, clearFormData } = this.props;
         if (event.type === 'change') {
-            this.props.storeFieldData(name, type, value);
             if(type === 'file') {
                 value = files[0] || false;
+                console.log(value)
                 parseUploadFile(value)
                     .then(file => this.setState({ avatar_preview: file.target.result }))
                     .catch(error => this.setState({ avatar_preview: null }))
             }
+            storeFieldData(name, type, value);
         }
         if (event.type === 'click') {
             if(tagName === 'BUTTON') {           
-                console.log(event)
                 const form = validateForm({
                     data: this.props.form, 
                     asFormData: true
                 });
                 if (form) {
-                    this.props.fetchUser(methods.PUT_USER, form);
+                    clearFormData();
+                    fetchUser(methods.PUT_USER, form);
                 } else {
                     console.log('form invalid')
                 }
@@ -154,6 +157,7 @@ class Account extends React.Component {
                                     fieldType: 'file',
                                     fieldValue: 'Choose your photo',
                                     fieldHelp: 'imageHelp', 
+                                    helpText: constants.INPUT_FILE_ALERT_INVALID
                                 }}
                             />
                         </form>
@@ -179,6 +183,9 @@ const mapDispatchToProps = (dispatch, state) => {
         },
         fetchUser: (method, data) => {
             dispatch(fetchUser(method, data));
+        },
+        clearFormData: () => {
+            dispatch(clearFormData());
         }
     }
 };

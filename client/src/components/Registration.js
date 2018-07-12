@@ -142,6 +142,7 @@ class RegForm extends React.Component {
                     fieldType: 'file',
                     fieldValue: 'Choose your photo',
                     fieldHelp: 'imageHelp',
+                    helpText: constants.INPUT_FILE_ALERT_INVALID,
                     required: true
                   }}
                 />

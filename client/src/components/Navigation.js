@@ -1,12 +1,13 @@
 import React        from 'react';
 import { Link }     from 'react-router-dom';
 import { connect }  from 'react-redux';
-import { logout }   from '../actions/token-actions';
+import { logout }   from '../actions/user-actions';
 
 class Navigation extends React.Component {
 
     render() {
-      return (
+    const { isLogin } = this.props    
+    return (
             <header className="row header no-gutters">
                 <div className="col logo"><i className="icon logo-badge"></i></div>
                 <div className="col-11">
@@ -21,18 +22,18 @@ class Navigation extends React.Component {
                                     <Link 
                                         to='/registration' 
                                         className="nav-link" 
-                                        hidden={this.props.token}>Registration</Link>
+                                        hidden={isLogin}>Registration</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link 
                                         to='/login' 
                                         className="nav-link"
-                                        hidden={this.props.token}>Login</Link>
+                                        hidden={isLogin}>Login</Link>
                                 </li>
                                 <li className="nav-item">
                                     <a 
                                         className="nav-link"
-                                        hidden={!this.props.token}
+                                        hidden={!isLogin}
                                         href="/" 
                                         onClick={(e) => {e.preventDefault(); this.props.logout()}}>
                                         Logout</a>
@@ -48,7 +49,7 @@ class Navigation extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        token: store.tokenState.token,
+        isLogin: store.userData.isLogin,
     }
 };
 
