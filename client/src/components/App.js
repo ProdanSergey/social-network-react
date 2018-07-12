@@ -7,10 +7,11 @@ import Sidebar        from './Sidebar';
 import MessageBox     from './MessageBox';
 
 import { loadTokenToStore } from '../actions/token-actions';
-import { fetchUser, loginUser }        from '../actions/user-actions';
-import { loadState }        from '../assets/LocalStorage';
+import { fetchUser }        from '../actions/user-actions';
+import { clearFormData }    from '../actions/form-actions';
 
-import * as methods           from '../constants/fetch';
+import { loadState }        from '../assets/LocalStorage';
+import * as methods         from '../constants/fetch';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../css/index.css';
@@ -26,6 +27,11 @@ class App extends React.Component {
         fetchUser(methods.GET_USER)
       }
     }
+  }
+
+  componentDidUpdate(prevProps) {
+    const {location: {pathname}, clearFormData } = this.props
+    if (prevProps.location.pathname !== pathname) clearFormData(); 
   }
 
   render(){
@@ -44,8 +50,9 @@ class App extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-    token:   store.tokenState.token,
-    isLogin: store.userData.isLogin
+    token:    store.tokenState.token,
+    isLogin:  store.userData.isLogin,
+    location: store.router.location
   }
 };
 
@@ -56,6 +63,9 @@ const mapDispatchToProps = (dispatch, state) => {
     },
     fetchUser: (method, data) => {
       dispatch(fetchUser(method, data));
+    },
+    clearFormData: () => {
+      dispatch(clearFormData());
     }
   }
 };

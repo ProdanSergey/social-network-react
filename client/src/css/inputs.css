@@ -3,11 +3,15 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  margin-bottom: 1rem;
+}
+
+.input-wrapper .input-button button {
+  height: 100%;
 }
 
 .input-wrapper .input-field {
   width: 100%;
-  margin-bottom: 1rem;
 }
 
 .prepend {

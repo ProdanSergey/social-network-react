@@ -1,6 +1,10 @@
-import * as types             from './action-types';
-import { getFetchMethod }     from '../assets/fetch/getFetchMethod';
-import { getFetchResponse }   from '../assets/fetch/getFetchResponse';
+import * as types                from './action-types';
+import * as redirect             from '../constants/redirect';
+import { deleteTokenFromStore }  from '../actions/token-actions';
+import { getFetchMethod }        from '../assets/fetch/getFetchMethod';
+import { getFetchResponse }      from '../assets/fetch/getFetchResponse';
+import { removeState }           from '../assets/LocalStorage';
+import { push }                  from 'connected-react-router';
 
 const fetchUserBegin = () => ({
   type: types.FETCH_USER_BEGIN
@@ -29,6 +33,14 @@ export const logoutUser = () => ({
   type: types.LOGOUT_USER,
 });
 
+export const logout = () => {
+  return dispatch => {
+    removeState();
+    dispatch(deleteTokenFromStore());
+    dispatch(logoutUser());
+    dispatch(push(redirect.LOGOUT_REDIRECT));
+  }
+}
 
 export const fetchUser = (payload, data) => {
   return dispatch => {
