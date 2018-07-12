@@ -182,7 +182,7 @@ h1, h2, h3 {
   right: 5px;
 }
 
-.main .searchpage .users {
+.main .searchpage .users, .main .friendspage .users {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -191,14 +191,18 @@ h1, h2, h3 {
   padding: 1rem;
 }
 
-.main .searchpage .card {
+.main .searchpage .usercard, .main .friendspage .usercard {
   position: relative;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 45%;
-  flex: 0 0 45%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
   margin: 1rem;
   padding: 1rem;
   -webkit-box-pack: center;
@@ -211,42 +215,42 @@ h1, h2, h3 {
   border-radius: 5px;
 }
 
-.main .searchpage .card__image {
+.main .searchpage .usercard__image, .main .friendspage .usercard__image {
   width: 200px;
   height: 200px;
   border-radius: 50%;
   overflow: hidden;
 }
 
-.main .searchpage .card__name {
+.main .searchpage .usercard__name, .main .friendspage .usercard__name {
   text-align: center;
   margin: 1rem 0;
 }
 
-.main .searchpage .card__info {
+.main .searchpage .usercard__info, .main .friendspage .usercard__info {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   margin: 0;
 }
 
-.main .searchpage .card__info .icon {
+.main .searchpage .usercard__info .icon, .main .friendspage .usercard__info .icon {
   width: 25px;
   height: 25px;
   margin-right: 0.375rem;
 }
 
-.main .searchpage .card__info span {
+.main .searchpage .usercard__info span, .main .friendspage .usercard__info span {
   font-weight: bold;
 }
 
-.main .searchpage .card__follow {
+.main .searchpage .usercard__follow, .main .friendspage .usercard__follow {
   position: absolute;
   top: 5px;
   right: 5px;
 }
 
-.main .searchpage .card__follow .icon {
+.main .searchpage .usercard__follow .icon, .main .friendspage .usercard__follow .icon {
   width: 25px;
   height: 25px;
 }

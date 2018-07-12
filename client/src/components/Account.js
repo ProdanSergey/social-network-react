@@ -172,7 +172,7 @@ const mapStateToProps = function(store) {
     }
 };
   
-  const mapDispatchToProps = (dispatch, state) => {
+const mapDispatchToProps = (dispatch, state) => {
     return {
         storeFieldData: (name, type, value) => {
             dispatch(storeFieldData(name, type, value));

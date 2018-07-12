@@ -20,13 +20,13 @@ class UserCard extends React.Component {
             onUpdate
         } = this.props
         return(
-            <div className="card">
-                <div className="card__image">
+            <div className="usercard">
+                <div className="usercard__image">
                     <img src={avatar} alt=""/>
                 </div>
-                <h1 className="card__name">{`${firstName} ${lastName}`}</h1>
-                <p className="card__info"><i className={`icon ${this.genderIconHandler(gender)}`}></i><span>{age} years</span></p>
-                <div className="card__follow">
+                <h1 className="usercard__name">{`${firstName} ${lastName}`}</h1>
+                <p className="usercard__info"><i className={`icon ${this.genderIconHandler(gender)}`}></i><span>{age} years</span></p>
+                <div className="usercard__follow">
                     <i 
                         id={_id} 
                         className={`icon star-${isFriend ? 'filled' : 'blank'}`} 

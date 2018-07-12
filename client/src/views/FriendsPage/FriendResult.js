@@ -16,7 +16,6 @@ class FriendResult extends React.Component {
                 }
             }
         } = this.props
-        console.log(this.props)
         if (ready) {
             if (!users.length) return <p className="mb-0">{constants.SEARCH_NOTHING_FOUND}</p>
             return (

@@ -3,6 +3,7 @@ import {
     loginUser }               from '../../actions/user-actions';
 import { storeSearchResult }  from '../../actions/search-actions';
 import { storeFriendsResult } from '../../actions/friends-actions';
+import { showMessage }        from '../../actions/message-action';
 import { push }               from 'connected-react-router';
 
 import { saveState }          from '../LocalStorage';
@@ -11,15 +12,15 @@ export const getFetchResponse = (dispatch, res) => {
     const { 
         response,
         response: {
-            authorized, 
-            registered, 
-            authenticated
+            authenticated,
+            alert
         },
         token, 
         user,
         search,
         friends
     } = res;
+    if (alert) dispatch(showMessage(response));
     if (user) dispatch(storeUser(user));
     if (search) dispatch(storeSearchResult(search));
     if (friends) dispatch(storeFriendsResult(friends));
@@ -28,8 +29,6 @@ export const getFetchResponse = (dispatch, res) => {
             dispatch(loginUser());
             dispatch(push('/'));
     }
-    if (authenticated) {
-        dispatch(loginUser());
-    }
+    if (authenticated) dispatch(loginUser());
     return response;
 }

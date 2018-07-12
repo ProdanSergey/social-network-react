@@ -10,8 +10,17 @@ import * as methods     from '../constants/fetch';
 class Friends extends React.Component {
 
     componentDidMount() {
-        const { fetchFriends } = this.props
-        fetchFriends(methods.GET_FRIENDS)
+        const { fetchFriends, userIsReady } = this.props
+        if(userIsReady) {
+            fetchFriends(methods.GET_FRIENDS)
+        } 
+    }
+
+    componentDidUpdate(prevProps) {
+        const { fetchFriends, userIsReady } = this.props
+        if(prevProps.userIsReady !== userIsReady) {
+            fetchFriends(methods.GET_FRIENDS)
+        } 
     }
 
     render() {
@@ -36,11 +45,11 @@ class Friends extends React.Component {
 
 const mapStateToProps = function(store) {
     return {
-        ready:     store.friendsData.ready,
-        fetching:  store.friendsData.fetching,
-        response:  store.friendsData.response,
-        friends:   store.friendsData.friends,
-        user:      store.userData.user
+        ready:          store.friendsData.ready,
+        response:       store.friendsData.response,
+        friends:        store.friendsData.friends,
+        user:           store.userData.user,
+        userIsReady:    store.userData.ready
     }
 };
   
